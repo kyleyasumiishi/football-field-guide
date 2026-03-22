@@ -147,6 +147,74 @@
     .play-type-run  { background: #3a2a10; color: #f5a623; border: 1px solid #6a4a20; }
     .play-type-pass { background: #1a2a4a; color: #69d2e7; border: 1px solid #2a4a7a; }
 
+    /* Personnel panel */
+    .personnel-panel {
+      width: min(96vw, 560px);
+      background: #1a140e;
+      border: 1px solid #5a3a10;
+      border-radius: 12px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      text-align: left;
+    }
+
+    .personnel-code {
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: #2a1a08;
+      color: #f5a623;
+      border: 1px solid #6a3a10;
+      border-radius: 20px;
+      padding: 2px 9px;
+      letter-spacing: 0.04em;
+    }
+
+    .personnel-roster {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+
+    .personnel-chip {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 9px;
+      border-radius: 20px;
+    }
+
+    .chip-wr  { background: #1e3a10; color: #82c55a; border: 1px solid #2a5a18; }
+    .chip-te  { background: #1a2e10; color: #6abf40; border: 1px solid #2a4a18; }
+    .chip-rb  { background: #3a2a08; color: #f5a623; border: 1px solid #6a4a10; }
+    .chip-fb  { background: #3a2a08; color: #e89010; border: 1px solid #6a4a10; }
+
+    .personnel-forces {
+      font-size: 0.82rem;
+      color: #e07070;
+      border-left: 3px solid #e07070;
+      padding-left: 10px;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .personnel-forces-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #e07070;
+      margin-bottom: 2px;
+    }
+
+    /* Highlighted dot pulse */
+    @keyframes pulse-ring {
+      0%   { opacity: 0.8; r: 13; }
+      50%  { opacity: 0.3; r: 16; }
+      100% { opacity: 0.8; r: 13; }
+    }
+
+    .dot-highlight { animation: pulse-ring 1.4s ease-in-out infinite; }
+
     /* Coverage panel */
     .coverage-panel {
       width: min(96vw, 560px);
@@ -1157,6 +1225,66 @@ const PLAYS = {
   },
 };
 
+// ─── PERSONNEL DATA ────────────────────────────────────────────────
+// Personnel packages: XY = X running backs, Y tight ends, rest are WRs
+// highlight: which position IDs to glow on the field
+const PERSONNEL = {
+  '11': {
+    name: '11 Personnel',
+    code: '1 RB · 1 TE · 3 WR',
+    offForm: 'Shotgun',
+    description: 'The most common package in the modern NFL — used on roughly 60% of offensive snaps. Three wide receivers spread the field while the TE keeps the defense guessing: he can block like a lineman or run routes like a receiver.',
+    forcesDefense: 'Nickel — the defense must replace a linebacker with a 5th DB to match the 3rd wide receiver. Otherwise a speedy slot WR is being covered by a slow linebacker.',
+    highlight: ['WR1', 'WR2', 'WR3', 'TE', 'RB'],
+    roster: { WR: 3, TE: 1, RB: 1 },
+  },
+  '12': {
+    name: '12 Personnel',
+    code: '1 RB · 2 TE · 2 WR',
+    offForm: '2-TE',
+    description: 'Two tight ends create a physical, versatile formation. One TE is usually the blocker, the other the receiving threat — but the defense doesn\'t know which is which until after the snap. Great for both power runs and play-action passes.',
+    forcesDefense: 'Base 4-3 or 3-4 — two TEs signal run, so the defense brings linebackers back in. If they stay in Nickel, the offense has a size mismatch on the edge.',
+    highlight: ['TE', 'TE2', 'RB', 'WR1', 'WR2'],
+    roster: { WR: 2, TE: 2, RB: 1 },
+  },
+  '21': {
+    name: '21 Personnel',
+    code: '2 RB · 1 TE · 2 WR',
+    offForm: 'I-Form',
+    description: 'The classic traditional formation — QB under center, FB and RB stacked behind him. The FB is the key: he can lead block, catch a flat pass, or fake a run to set up play-action. Signals power football.',
+    forcesDefense: 'Base 4-3 or 46 — two backs mean run, so the defense packs the box with linebackers. This is exactly what the offense wants for play-action.',
+    highlight: ['FB', 'RB', 'TE', 'WR1', 'WR2'],
+    roster: { WR: 2, TE: 1, RB: 1, FB: 1 },
+  },
+  '22': {
+    name: '22 Personnel',
+    code: '2 RB · 2 TE · 1 WR',
+    offForm: '2-TE',
+    description: 'Maximum power. Two backs and two tight ends means 6 blockers plus the QB. Used almost exclusively in short yardage and goal line situations. One yard needed — line up and push.',
+    forcesDefense: '46 or stacked 4-3 — the defense has to match physicality with physicality. If they stay in Nickel or Dime, they get steamrolled at the line of scrimmage.',
+    highlight: ['FB', 'RB', 'TE', 'TE2', 'WR1'],
+    roster: { WR: 1, TE: 2, RB: 1, FB: 1 },
+  },
+  '10': {
+    name: '10 Personnel',
+    code: '1 RB · 0 TE · 4 WR',
+    offForm: 'Trips',
+    description: 'Four wide receivers and no tight end — maximum spread. Forces the defense to put DBs everywhere. The lone RB stays in to block or leaks out as a checkdown. Almost always a passing formation.',
+    forcesDefense: 'Dime — with 4 WRs the defense needs 6 DBs minimum. Any linebacker matched up against a WR is a mismatch the offense will attack immediately.',
+    highlight: ['WR1', 'WR2', 'WR3', 'RB'],
+    roster: { WR: 4, TE: 0, RB: 1 },
+  },
+  '00': {
+    name: '00 Personnel',
+    code: '0 RB · 0 TE · 5 WR',
+    offForm: 'Empty',
+    description: 'Five wide receivers, nobody in the backfield. Every eligible player is a receiver. Used in desperation situations or as a surprise package. The defense must cover the whole field — there\'s no run threat whatsoever.',
+    forcesDefense: 'Quarter — 7 DBs needed to match 5 WRs. With no RB, there\'s no one to block blitzers either, so the QB has to get rid of the ball fast.',
+    highlight: ['WR1', 'WR2', 'WR3', 'TE', 'RB'],
+    roster: { WR: 5, TE: 0, RB: 0 },
+  },
+};
+
 // ─── COVERAGE DATA ─────────────────────────────────────────────────
 // zones: SVG rects drawn on the field as semi-transparent overlays
 // assignments: what each defender is responsible for
@@ -1466,7 +1594,7 @@ function Tags({ tags }) {
 }
 
 // ─── FIELD SVG ─────────────────────────────────────────────────────
-function FieldSVG({ players, onSelect, selected, view, routeLines, arrowLines, coverageZones }) {
+function FieldSVG({ players, onSelect, selected, view, routeLines, arrowLines, coverageZones, highlightedIds }) {
   return (
     <svg
       className="field-svg"
@@ -1563,6 +1691,8 @@ function FieldSVG({ players, onSelect, selected, view, routeLines, arrowLines, c
         const px = 20 + x * 3.6;
         const py = 10 + y * 3.2;
         const isSelected = selected === id;
+        const isHighlighted = highlightedIds ? highlightedIds.has(id) : false;
+        const isDimmed = highlightedIds && !isHighlighted;
         return (
           <g
             key={id}
@@ -1570,12 +1700,15 @@ function FieldSVG({ players, onSelect, selected, view, routeLines, arrowLines, c
             onClick={() => onSelect(id)}
             style={{ transform: `translate(${px}px, ${py}px)` }}
           >
+            {isHighlighted && (
+              <circle className="dot-highlight" r={13} fill={color} opacity={0.35} />
+            )}
             <circle
               r={isSelected ? 13 : 10}
               fill={color}
-              stroke={isSelected ? '#fff' : 'rgba(0,0,0,0.4)'}
-              strokeWidth={isSelected ? 2.5 : 1.5}
-              opacity={0.92}
+              stroke={isSelected ? '#fff' : isHighlighted ? '#fff' : 'rgba(0,0,0,0.4)'}
+              strokeWidth={isSelected || isHighlighted ? 2.5 : 1.5}
+              opacity={isDimmed ? 0.3 : 0.92}
             />
             <text
               className="player-label"
@@ -1604,6 +1737,20 @@ function App() {
   const [hasRun, setHasRun] = useState(false);
   const [showMatchups, setShowMatchups] = useState(false);
   const [selectedCoverage, setSelectedCoverage] = useState('');
+  const [selectedPersonnel, setSelectedPersonnel] = useState('');
+
+  const handleSelectPersonnel = (key) => {
+    setSelectedPersonnel(key);
+    setSelectedScenario('');
+    setSelectedPlay('');
+    setAnimPositions(null);
+    setHasRun(false);
+    setSelected(null);
+    if (key) {
+      setOffForm(PERSONNEL[key].offForm);
+      setView('both');
+    }
+  };
   const [selectedScenario, setSelectedScenario] = useState('');
 
   const scenario = selectedScenario ? SCENARIOS[selectedScenario] : null;
@@ -1708,6 +1855,7 @@ function App() {
     : null;
 
   const coverageZones = selectedCoverage ? COVERAGES[selectedCoverage].zones : null;
+  const highlightedIds = selectedPersonnel ? new Set(PERSONNEL[selectedPersonnel].highlight) : null;
 
   const handleSelect = useCallback((id) => {
     if (isPlaying) return;
@@ -1807,6 +1955,26 @@ function App() {
           </select>
         </div>
 
+        {/* Personnel selector */}
+        <div className="control-group">
+          <span className="control-label">Personnel</span>
+          <select value={selectedPersonnel} onChange={e => handleSelectPersonnel(e.target.value)} disabled={!!selectedPlay}>
+            <option value="">— Personnel package —</option>
+            <optgroup label="── Common ──">
+              <option value="11">11 · 1RB 1TE 3WR</option>
+              <option value="12">12 · 1RB 2TE 2WR</option>
+              <option value="21">21 · 2RB 1TE 2WR</option>
+            </optgroup>
+            <optgroup label="── Power ──">
+              <option value="22">22 · 2RB 2TE 1WR</option>
+            </optgroup>
+            <optgroup label="── Spread ──">
+              <option value="10">10 · 1RB 0TE 4WR</option>
+              <option value="00">00 · 0RB 0TE 5WR</option>
+            </optgroup>
+          </select>
+        </div>
+
         {/* Play selector */}
         <div className="control-group">
           <span className="control-label">Play Diagram</span>
@@ -1888,6 +2056,7 @@ function App() {
           routeLines={routeLines}
           arrowLines={arrowLines}
           coverageZones={coverageZones}
+          highlightedIds={highlightedIds}
         />
       </div>
 
@@ -1943,6 +2112,33 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Personnel info panel */}
+      {selectedPersonnel && (() => {
+        const p = PERSONNEL[selectedPersonnel];
+        const chipClass = { WR: 'chip-wr', TE: 'chip-te', RB: 'chip-rb', FB: 'chip-fb' };
+        const chips = Object.entries(p.roster).flatMap(([pos, count]) =>
+          Array.from({ length: count }, (_, i) => ({ pos, key: `${pos}-${i}` }))
+        );
+        return (
+          <div className="personnel-panel">
+            <div className="info-header">
+              <span className="info-name">{p.name}</span>
+              <span className="personnel-code">{p.code}</span>
+            </div>
+            <div className="personnel-roster">
+              {chips.map(({ pos, key }) => (
+                <span key={key} className={`personnel-chip ${chipClass[pos] || 'chip-rb'}`}>{pos}</span>
+              ))}
+            </div>
+            <p className="info-role">{p.description}</p>
+            <div style={{ marginTop: '10px' }}>
+              <div className="personnel-forces-label">Forces defense to:</div>
+              <p className="personnel-forces">{p.forcesDefense}</p>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Coverage info panel */}
       {selectedCoverage && (() => {
