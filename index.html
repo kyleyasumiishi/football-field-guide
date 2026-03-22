@@ -905,13 +905,101 @@ const PLAYS = {
     tags: ['Pass', 'Play action', 'Misdirection'],
     description: 'QB fakes a handoff to freeze the linebackers, then bootlegs to the opposite side. The TE sneaks out on a corner route behind the confused LBs. Classic misdirection — the defense reacts to the fake and is completely out of position.',
     phases: [
-      // Snap: QB fakes handoff, RB dives into line
       { QB:{x:50,y:60}, RB:{x:50,y:64}, FB:{x:50,y:60} },
-      // QB bootlegs right, TE releases, WRs run routes
       { QB:{x:65,y:57}, RB:{x:50,y:53}, FB:{x:49,y:56},
         TE:{x:74,y:44}, WR1:{x:18,y:38}, WR2:{x:85,y:42} },
-      // QB throws on the run to TE on corner route
       { QB:{x:70,y:54}, TE:{x:79,y:34}, WR1:{x:22,y:28}, WR2:{x:83,y:32} },
+    ],
+  },
+
+  'outside-zone': {
+    name: 'Outside Zone',
+    type: 'Run',
+    offForm: 'Singleback',
+    defForm: '4-3',
+    tags: ['Run', 'Edge'],
+    description: 'The entire OL slides laterally toward the sideline — no double-teams, just movement. The RB follows and reads the edge: if it\'s sealed, he turns upfield; if not, he cuts back against the grain. Looks chaotic, but the lateral stretch is the whole point.',
+    phases: [
+      // Snap: OL all step right, RB starts wide
+      { LT:{x:40,y:54}, LG:{x:46,y:54}, C:{x:53,y:54}, RG:{x:60,y:54}, RT:{x:67,y:54},
+        TE:{x:74,y:54}, QB:{x:50,y:59}, RB:{x:57,y:63} },
+      // OL sealing edge, RB turns upfield outside
+      { LT:{x:42,y:51}, LG:{x:48,y:51}, C:{x:55,y:51}, RG:{x:62,y:51}, RT:{x:69,y:51},
+        TE:{x:76,y:50}, QB:{x:49,y:61}, RB:{x:68,y:55} },
+      // RB turns upfield
+      { RB:{x:73,y:44}, QB:{x:48,y:63} },
+    ],
+  },
+
+  'power': {
+    name: 'Power',
+    type: 'Run',
+    offForm: 'I-Form',
+    defForm: '4-3',
+    tags: ['Run', 'Power', 'Gap scheme'],
+    description: 'The backside guard pulls around the line and leads the RB through a specific gap. One side doubles a DL to collapse the hole, the puller kicks out the linebacker. Pure strength and angles — a coordinated assault on one spot.',
+    phases: [
+      // Snap: RG pulls, FB leads, OL double-teams left side
+      { LT:{x:37,y:52}, LG:{x:43,y:52}, C:{x:50,y:52}, RG:{x:54,y:50},
+        RT:{x:63,y:52}, TE:{x:70,y:52}, QB:{x:50,y:60}, FB:{x:50,y:63}, RB:{x:50,y:71} },
+      // RG pulls to right, FB kicks out SAM, RB follows
+      { RG:{x:62,y:50}, FB:{x:58,y:53}, RB:{x:52,y:62}, QB:{x:48,y:62} },
+      // RB hits the hole behind the pull
+      { RB:{x:60,y:49}, FB:{x:63,y:47}, RG:{x:65,y:48} },
+    ],
+  },
+
+  'draw': {
+    name: 'Draw',
+    type: 'Run',
+    offForm: 'Shotgun',
+    defForm: '4-3',
+    tags: ['Run', 'Misdirection', 'vs. Pass rush'],
+    description: 'QB takes the snap and drops back like he\'s passing — the DL all rush upfield chasing the QB. Then he hands off to the RB, who runs through the gaping holes the over-pursuing defenders just vacated. The pass rush beats itself.',
+    phases: [
+      // Snap: QB drops back, OL pass-sets, DL rushes hard
+      { QB:{x:50,y:72}, RB:{x:59,y:68},
+        DE1:{x:30,y:46}, DT1:{x:42,y:46}, DT2:{x:58,y:46}, DE2:{x:70,y:46} },
+      // QB holds ball, DL over-pursues deep
+      { QB:{x:50,y:74},
+        DE1:{x:27,y:52}, DT1:{x:42,y:50}, DT2:{x:58,y:50}, DE2:{x:73,y:52} },
+      // QB hands to RB who hits the vacated middle
+      { QB:{x:50,y:72}, RB:{x:51,y:57},
+        DE1:{x:25,y:56}, DT1:{x:42,y:53}, DT2:{x:58,y:53}, DE2:{x:75,y:56} },
+    ],
+  },
+
+  'slants': {
+    name: 'Slants',
+    type: 'Pass',
+    offForm: 'Shotgun',
+    defForm: '4-3',
+    tags: ['Pass', 'Short', 'Quick'],
+    description: 'Every receiver takes one step outside to freeze the corner, then cuts hard at a 45° angle across the middle. The fastest route in football — the ball is out in under two seconds. Kills zone coverage by flooding the middle, and the diagonal angle makes it hard to jam at the line.',
+    phases: [
+      // Snap: QB quick drop, receivers take outside release step
+      { QB:{x:50,y:70}, WR1:{x:10,y:52}, WR2:{x:90,y:52}, WR3:{x:82,y:56}, TE:{x:72,y:52} },
+      // All receivers cut hard inside at 45°
+      { WR1:{x:22,y:46}, WR2:{x:78,y:46}, WR3:{x:72,y:50}, TE:{x:62,y:48}, QB:{x:50,y:72} },
+      // Routes across the middle, QB throws
+      { WR1:{x:32,y:40}, WR2:{x:68,y:40}, WR3:{x:62,y:44}, TE:{x:52,y:42}, QB:{x:52,y:69} },
+    ],
+  },
+
+  'hail-mary': {
+    name: 'Hail Mary',
+    type: 'Pass',
+    offForm: 'Empty',
+    defForm: 'Quarter',
+    tags: ['Pass', 'Deep', 'Desperation'],
+    description: 'Last play of the half or game, trailing by a score. Everyone sprints to the end zone as fast as possible. The QB heaves it as far as he can and prays. The defense floods the end zone with defenders. Pure chaos — but it works a few times a year.',
+    phases: [
+      // Snap: all receivers sprint full speed downfield
+      { QB:{x:50,y:67}, WR1:{x:12,y:40}, WR2:{x:88,y:40}, WR3:{x:25,y:40}, TE:{x:70,y:40}, RB:{x:75,y:40} },
+      // Receivers at midfield
+      { WR1:{x:20,y:22}, WR2:{x:80,y:22}, WR3:{x:35,y:20}, TE:{x:65,y:20}, RB:{x:50,y:18}, QB:{x:50,y:70} },
+      // Everyone floods the end zone, QB launches
+      { WR1:{x:25,y:8}, WR2:{x:75,y:8}, WR3:{x:40,y:6}, TE:{x:60,y:6}, RB:{x:50,y:6}, QB:{x:50,y:68} },
     ],
   },
 };
@@ -1320,11 +1408,16 @@ function App() {
             <option value="">— Select a play —</option>
             <optgroup label="── Run ──">
               <option value="inside-zone">Inside Zone</option>
+              <option value="outside-zone">Outside Zone</option>
+              <option value="power">Power</option>
+              <option value="draw">Draw</option>
             </optgroup>
             <optgroup label="── Pass ──">
               <option value="four-verts">Four Verticals</option>
               <option value="bubble-screen">Bubble Screen</option>
               <option value="play-action-boot">Play Action Boot</option>
+              <option value="slants">Slants</option>
+              <option value="hail-mary">Hail Mary</option>
             </optgroup>
           </select>
         </div>
