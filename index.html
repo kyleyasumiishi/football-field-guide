@@ -147,6 +147,22 @@
     .play-type-run  { background: #3a2a10; color: #f5a623; border: 1px solid #6a4a20; }
     .play-type-pass { background: #1a2a4a; color: #69d2e7; border: 1px solid #2a4a7a; }
 
+    /* Matchup toggle */
+    .matchup-btn {
+      background: #2a1a3a;
+      color: #c86dd9;
+      border: 1.5px solid #4a2a6a;
+      border-radius: 8px;
+      padding: 7px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: all 0.15s;
+    }
+    .matchup-btn:hover { background: #3a1a5a; color: #fff; }
+    .matchup-btn.active { background: #6a2a9a; color: #fff; border-color: #9a4ad9; }
+
     .player-label {
       pointer-events: none;
       font-size: 8px;
@@ -900,6 +916,100 @@ const PLAYS = {
   },
 };
 
+// ─── MATCHUP DATA ──────────────────────────────────────────────────
+// [offensivePlayerId, defensivePlayerId, label shown on hover]
+// Defined per defensive formation since coverage assignments change
+const MATCHUPS = {
+  '4-3': [
+    ['LT',   'DE1',  'Pass block'],
+    ['LG',   'DT1',  'Pass block'],
+    ['C',    'DT2',  'Pass block'],
+    ['RG',   'DT2',  'Pass block'],
+    ['RT',   'DE2',  'Pass block'],
+    ['WR1',  'LCB',  'Man coverage'],
+    ['WR2',  'RCB',  'Man coverage'],
+    ['WR3',  'SS',   'Slot coverage'],
+    ['TE',   'SAM',  'TE coverage'],
+    ['RB',   'WILL', 'Backfield coverage'],
+    ['QB',   'MLB',  'QB spy'],
+  ],
+  '3-4': [
+    ['LT',   'DE1',  'Pass block'],
+    ['LG',   'DT2',  'Pass block'],
+    ['C',    'DT2',  'Pass block'],
+    ['RG',   'DT2',  'Pass block'],
+    ['RT',   'DE2',  'Pass block'],
+    ['WR1',  'LCB',  'Man coverage'],
+    ['WR2',  'RCB',  'Man coverage'],
+    ['TE',   'SAM',  'TE coverage'],
+    ['RB',   'WILL', 'Backfield coverage'],
+    ['QB',   'MLB',  'QB spy'],
+  ],
+  Nickel: [
+    ['LT',   'DE1',  'Pass block'],
+    ['LG',   'DT1',  'Pass block'],
+    ['C',    'DT2',  'Pass block'],
+    ['RG',   'DT2',  'Pass block'],
+    ['RT',   'DE2',  'Pass block'],
+    ['WR1',  'LCB',  'Man coverage'],
+    ['WR2',  'RCB',  'Man coverage'],
+    ['WR3',  'NB',   'Nickel coverage'],
+    ['TE',   'SAM',  'TE coverage'],
+    ['RB',   'WILL', 'Backfield coverage'],
+    ['QB',   'MLB',  'QB spy'],
+  ],
+  Dime: [
+    ['LT',   'DE1',  'Pass block'],
+    ['LG',   'DT1',  'Pass block'],
+    ['C',    'DT2',  'Pass block'],
+    ['RG',   'DT2',  'Pass block'],
+    ['RT',   'DE2',  'Pass block'],
+    ['WR1',  'LCB',  'Man coverage'],
+    ['WR2',  'RCB',  'Man coverage'],
+    ['WR3',  'NB',   'Slot coverage'],
+    ['TE',   'DB3',  'TE coverage'],
+    ['RB',   'WILL', 'Backfield coverage'],
+    ['QB',   'MLB',  'QB spy'],
+  ],
+  '4-2-5': [
+    ['LT',   'DE1',  'Pass block'],
+    ['LG',   'DT1',  'Pass block'],
+    ['C',    'DT2',  'Pass block'],
+    ['RG',   'DT2',  'Pass block'],
+    ['RT',   'DE2',  'Pass block'],
+    ['WR1',  'LCB',  'Man coverage'],
+    ['WR2',  'RCB',  'Man coverage'],
+    ['WR3',  'NB',   'Slot coverage'],
+    ['TE',   'SS',   'TE coverage'],
+    ['RB',   'WILL', 'Backfield coverage'],
+    ['QB',   'MLB',  'QB spy'],
+  ],
+  '46': [
+    ['LT',   'DE1',  'Pass block'],
+    ['LG',   'DT1',  'Pass block'],
+    ['C',    'DT2',  'Pass block'],
+    ['RG',   'DT2',  'Pass block'],
+    ['RT',   'DE2',  'Pass block'],
+    ['WR1',  'LCB',  'Man coverage'],
+    ['WR2',  'RCB',  'Man coverage'],
+    ['TE',   'SAM',  'TE coverage'],
+    ['RB',   'WILL', 'Backfield coverage'],
+    ['QB',   'SS',   'Extra rusher'],
+  ],
+  Quarter: [
+    ['LT',   'DE1',  'Pass block'],
+    ['LG',   'DT1',  'Pass block'],
+    ['C',    'DT2',  'Pass block'],
+    ['RG',   'DT2',  'Pass block'],
+    ['RT',   'DE2',  'Pass block'],
+    ['WR1',  'LCB',  'Man coverage'],
+    ['WR2',  'RCB',  'Man coverage'],
+    ['WR3',  'NB',   'Slot coverage'],
+    ['TE',   'DB3',  'TE coverage'],
+    ['RB',   'DB4',  'Backfield coverage'],
+  ],
+};
+
 // ─── TAG HELPER ────────────────────────────────────────────────────
 function tagClass(tag) {
   const t = tag.toLowerCase();
@@ -918,13 +1028,21 @@ function Tags({ tags }) {
 }
 
 // ─── FIELD SVG ─────────────────────────────────────────────────────
-function FieldSVG({ players, onSelect, selected, view, routeLines }) {
+function FieldSVG({ players, onSelect, selected, view, routeLines, arrowLines }) {
   return (
     <svg
       className="field-svg"
       viewBox="0 0 400 340"
       xmlns="http://www.w3.org/2000/svg"
     >
+      <defs>
+        <marker id="arrowhead-coverage" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="rgba(200,109,217,0.85)" />
+        </marker>
+        <marker id="arrowhead-block" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="rgba(245,166,35,0.85)" />
+        </marker>
+      </defs>
       {/* Field background */}
       <rect x="20" y="10" width="360" height="320" rx="4" fill="#2d6a2d" />
 
@@ -952,6 +1070,30 @@ function FieldSVG({ players, onSelect, selected, view, routeLines }) {
           <line x1="245" y1={y - 5} x2="245" y2={y + 5} stroke="#4a8a4a" strokeWidth="1" />
         </g>
       ))}
+
+      {/* Matchup arrows */}
+      {arrowLines && arrowLines.map(({ offId, defId, label, from, to }) => {
+        const x1 = 20 + from.x * 3.6;
+        const y1 = 10 + from.y * 3.2;
+        const x2 = 20 + to.x * 3.6;
+        const y2 = 10 + to.y * 3.2;
+        const dx = x2 - x1, dy = y2 - y1;
+        const len = Math.sqrt(dx * dx + dy * dy);
+        const ux = dx / len, uy = dy / len;
+        const sx = x1 + ux * 12, sy = y1 + uy * 12;
+        const ex = x2 - ux * 14, ey = y2 - uy * 14;
+        const isBlock = label.includes('block');
+        return (
+          <line
+            key={`match-${offId}-${defId}`}
+            x1={sx} y1={sy} x2={ex} y2={ey}
+            stroke={isBlock ? 'rgba(245,166,35,0.7)' : 'rgba(200,109,217,0.7)'}
+            strokeWidth="1.5"
+            strokeDasharray={isBlock ? 'none' : '5,3'}
+            markerEnd={isBlock ? 'url(#arrowhead-block)' : 'url(#arrowhead-coverage)'}
+          />
+        );
+      })}
 
       {/* Route trails */}
       {routeLines && routeLines.map(({ id, points, color }) => (
@@ -1011,6 +1153,7 @@ function App() {
   const [animPositions, setAnimPositions] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasRun, setHasRun] = useState(false);
+  const [showMatchups, setShowMatchups] = useState(false);
 
   const play = selectedPlay ? PLAYS[selectedPlay] : null;
 
@@ -1081,6 +1224,20 @@ function App() {
     const points = [startPos, ...allPhases.map(ph => ph[id])];
     return { id, points, color: POSITIONS[id]?.color || '#fff' };
   }).filter(Boolean) : null;
+
+  // Build matchup arrows from current player positions
+  const arrowLines = (showMatchups && view === 'both' && !selectedPlay)
+    ? (MATCHUPS[defForm] || []).map(([offId, defId, label]) => {
+        const offPos = animPositions?.[offId]
+          ? animPositions[offId]
+          : offPositions[offId];
+        const defPos = animPositions?.[defId]
+          ? animPositions[defId]
+          : defPositions[defId];
+        if (!offPos || !defPos) return null;
+        return { offId, defId, label, from: offPos, to: defPos };
+      }).filter(Boolean)
+    : null;
 
   const handleSelect = useCallback((id) => {
     if (isPlaying) return;
@@ -1172,6 +1329,19 @@ function App() {
           </select>
         </div>
 
+        {/* Matchup arrows toggle */}
+        {!selectedPlay && (
+          <div className="control-group">
+            <span className="control-label">Matchups</span>
+            <button
+              className={`matchup-btn ${showMatchups ? 'active' : ''}`}
+              onClick={() => { setShowMatchups(s => !s); setView('both'); }}
+            >
+              {showMatchups ? '◉ Hide Matchups' : '◎ Show Matchups'}
+            </button>
+          </div>
+        )}
+
         {/* Run / Reset buttons */}
         {selectedPlay && (
           <div className="control-group">
@@ -1195,6 +1365,7 @@ function App() {
           selected={selected}
           view={view}
           routeLines={routeLines}
+          arrowLines={arrowLines}
         />
       </div>
 
@@ -1257,6 +1428,20 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Matchup legend */}
+      {showMatchups && (
+        <div className="legend" style={{ paddingTop: 0 }}>
+          <div className="legend-item">
+            <svg width="24" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="rgba(200,109,217,0.8)" strokeWidth="1.5" strokeDasharray="5,3"/><polygon points="18,2 24,5 18,8" fill="rgba(200,109,217,0.8)"/></svg>
+            <span>Coverage</span>
+          </div>
+          <div className="legend-item">
+            <svg width="24" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="rgba(245,166,35,0.8)" strokeWidth="1.5"/><polygon points="18,2 24,5 18,8" fill="rgba(245,166,35,0.8)"/></svg>
+            <span>Blocking</span>
+          </div>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="legend">
