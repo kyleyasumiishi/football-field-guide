@@ -1,0 +1,935 @@
+{
+  "ARI": {
+    "name": "Arizona Cardinals",
+    "offense": {
+      "LG": "Isaiah Adams",
+      "RB": "Tyler Allgeier",
+      "WR1": "Andre Baccellia",
+      "LT": "Kelvin Beachum",
+      "WR2": "Kendrick Bourne",
+      "QB": "Jacoby Brissett",
+      "WR3": "Jalen Brooks",
+      "TE": "Pharaoh Brown",
+      "RG": "Hayden Conner",
+      "C": "Hjalte Froholdt",
+      "RT": "Josh Fryar"
+    },
+    "defense": {
+      "SS": "Budda Baker",
+      "DT1": "Andrew Billings",
+      "FS": "Joey Blount",
+      "MLB": "Elliott Brown",
+      "WILL": "Baron Browning",
+      "SAM": "Jordan Burch",
+      "LCB": "Denzel Burke",
+      "DT2": "Calais Campbell",
+      "RCB": "Kei'Trel Clark",
+      "DE1": "L.J. Collier",
+      "DE2": "Darius Robinson"
+    }
+  },
+  "ATL": {
+    "name": "Atlanta Falcons",
+    "offense": {
+      "LG": "Matthew Bergeron",
+      "WR1": "Chris Blair",
+      "RB": "Nathan Carter",
+      "WR2": "Jahan Dotson",
+      "WR3": "Dylan Drummond",
+      "TE": "Feleipe Franks",
+      "RG": "Kyle Hinton",
+      "LT": "Michael Jerrell",
+      "RT": "Jake Matthews",
+      "C": "Ryan Neuzil",
+      "QB": "Michael Penix Jr."
+    },
+    "defense": {
+      "MLB": "Troy Andersen",
+      "SS": "Jessie Bates III",
+      "WILL": "JD Bertrand",
+      "FS": "Billy Bowman Jr.",
+      "LCB": "Natrone Brooks",
+      "RCB": "Cobee Bryant",
+      "SAM": "Divine Deablo",
+      "DT1": "Brandon Dorlus",
+      "DE1": "Samson Ebukam",
+      "DE2": "Leonard Floyd",
+      "DT2": "Elijah Garcia"
+    }
+  },
+  "BAL": {
+    "name": "Baltimore Ravens",
+    "offense": {
+      "RB": "Rasheen Ali",
+      "TE": "Mark Andrews",
+      "WR1": "Rashod Bateman",
+      "C": "Corey Bullock",
+      "LG": "Daniel Faalele",
+      "WR2": "Zay Flowers",
+      "RG": "Jovaughn Gwyn",
+      "WR3": "DeAndre Hopkins",
+      "QB": "Tyler Huntley",
+      "LT": "Emery Jones Jr.",
+      "RT": "Gerad Lichtenhan",
+      "FB": "Lucas Scott"
+    },
+    "defense": {
+      "LCB": "Chidobe Awuzie",
+      "DT1": "Taven Bryan",
+      "MLB": "Teddye Buchanan",
+      "WILL": "Mike Green",
+      "SS": "Kyle Hamilton",
+      "FS": "Jaylinn Hawkins",
+      "DE1": "Trey Hendrickson",
+      "SAM": "Jay Higgins IV",
+      "RCB": "Marlon Humphrey",
+      "DT2": "John Jenkins",
+      "DE2": "Brent Urban"
+    }
+  },
+  "BUF": {
+    "name": "Buffalo Bills",
+    "offense": {
+      "QB": "Josh Allen",
+      "LT": "Alec Anderson",
+      "LG": "Nick Broeker",
+      "RT": "Spencer Brown",
+      "WR1": "Keon Coleman",
+      "RB": "James Cook III",
+      "WR2": "Brandin Cooks",
+      "WR3": "Gabe Davis",
+      "TE": "Jackson Hawes",
+      "C": "Connor McGovern",
+      "RG": "O'Cyrus Torrence"
+    },
+    "defense": {
+      "DT1": "Tommy Akingbesote",
+      "LCB": "Dee Alford",
+      "MLB": "Joe Andreessen",
+      "RCB": "Christian Benford",
+      "WILL": "Terrel Bernard",
+      "SS": "Cole Bishop",
+      "DE1": "Joey Bosa",
+      "DT2": "DeWayne Carter",
+      "SAM": "Bradley Chubb",
+      "DE2": "AJ Epenesa",
+      "FS": "Sam Franklin Jr."
+    }
+  },
+  "CAR": {
+    "name": "Carolina Panthers",
+    "offense": {
+      "RB": "Jonathon Brooks",
+      "LG": "Ja'Tyre Carter",
+      "RG": "Saahdiq Charles",
+      "WR1": "Dan Chisena",
+      "WR2": "Jalen Coker",
+      "C": "Austin Corbett",
+      "LT": "Ikem Ekwonu",
+      "TE": "Mitchell Evans",
+      "RT": "Stone Forsythe",
+      "WR3": "Jimmy Horn Jr.",
+      "QB": "Kenny Pickett"
+    },
+    "defense": {
+      "MLB": "Krys Barnes",
+      "WILL": "Jared Bartlett",
+      "DE1": "Derrick Brown",
+      "DT1": "Bobby Brown III",
+      "SAM": "Claudin Cherelus",
+      "LCB": "Akayleb Evans",
+      "RCB": "Tyrek Funderburk",
+      "DE2": "Jared Harrison-Hunte",
+      "DT2": "Cam Jackson",
+      "SS": "Tre'von Moehrig",
+      "FS": "Lathan Ransom"
+    }
+  },
+  "CHI": {
+    "name": "Chicago Bears",
+    "offense": {
+      "WR1": "Maurice Alexander",
+      "LT": "Kiran Amegadjie",
+      "QB": "Tyson Bagent",
+      "C": "Ryan Bates",
+      "RT": "Theo Benedet",
+      "RB": "Brittain Brown",
+      "WR2": "Luther Burden III",
+      "TE": "Stephen Carlson",
+      "LG": "Kyle Hergel",
+      "RG": "Jonah Jackson",
+      "WR3": "Rome Odunze"
+    },
+    "defense": {
+      "LCB": "Josh Blackwell",
+      "DE1": "Austin Booker",
+      "SS": "Coby Bryant",
+      "MLB": "Devin Bush",
+      "DT1": "Gervon Dexter Sr.",
+      "WILL": "T.J. Edwards",
+      "RCB": "Dallis Flowers",
+      "DT2": "Neville Gallimore",
+      "DE2": "Jonathan Garvin",
+      "FS": "Dominique Hampton",
+      "SAM": "Ruben Hyppolite II"
+    }
+  },
+  "CIN": {
+    "name": "Cincinnati Bengals",
+    "offense": {
+      "TE": "Erick All Jr.",
+      "C": "Jacob Bayer",
+      "RB": "Gary Brightwell",
+      "LT": "Orlando Brown Jr.",
+      "QB": "Joe Burrow",
+      "WR1": "Ja'Marr Chase",
+      "RT": "Andrew Coker",
+      "LG": "Dylan Fairchild",
+      "RG": "Cody Ford",
+      "WR2": "Tee Higgins",
+      "WR3": "Andrei Iosivas"
+    },
+    "defense": {
+      "DT1": "Jonathan Allen",
+      "MLB": "Liam Anderson",
+      "SS": "Daijahn Anthony",
+      "WILL": "Brian Asamoah II",
+      "FS": "Jordan Battle",
+      "SAM": "Oren Burks",
+      "DT2": "Howard Cross III",
+      "LCB": "Jalen Davis",
+      "DE1": "Isaiah Foskey",
+      "RCB": "Dax Hill",
+      "DE2": "Cedric Johnson"
+    }
+  },
+  "CLE": {
+    "name": "Cleveland Browns",
+    "offense": {
+      "TE": "Brenden Bates",
+      "LG": "Joel Bitonio",
+      "WR1": "Isaiah Bond",
+      "LT": "Jeremiah Byers",
+      "WR2": "DeAndre Carter",
+      "RG": "Jack Conley",
+      "WR3": "Malachi Corley",
+      "C": "Kingsley Eguakun",
+      "QB": "Dillon Gabriel",
+      "RT": "Tytus Howard",
+      "RB": "Quinshon Judkins"
+    },
+    "defense": {
+      "LCB": "Tre Avery",
+      "MLB": "Jerome Baker",
+      "RCB": "Tyson Campbell",
+      "DT1": "Maliek Collins",
+      "DT2": "Kalia Davis",
+      "SS": "Grant Delpit",
+      "WILL": "Mohamoud Diabate",
+      "FS": "Christopher Edmonds",
+      "DE1": "Myles Garrett",
+      "DE2": "Adin Huntington",
+      "SAM": "Easton Mascarenas-Arnold"
+    }
+  },
+  "DAL": {
+    "name": "Dallas Cowboys",
+    "offense": {
+      "RB": "Israel Abanikanda",
+      "LT": "Hakeem Adeniji",
+      "LG": "T.J. Bass",
+      "C": "Cooper Beebe",
+      "RG": "Tyler Booker",
+      "WR1": "Parris Campbell",
+      "RT": "Ajani Cornelius",
+      "TE": "Princeton Fant",
+      "WR2": "Ryan Flournoy",
+      "WR3": "Traeshon Holden",
+      "QB": "Sam Howell"
+    },
+    "defense": {
+      "LCB": "Corey Ballentine",
+      "MLB": "Justin Barron",
+      "SS": "Markquese Bell",
+      "RCB": "DaRon Bland",
+      "FS": "Alijah Clark",
+      "DT1": "Kenny Clark",
+      "DE1": "Jadeveon Clowney",
+      "DE2": "Donovan Ezeiruaku",
+      "WILL": "Shemar James",
+      "SAM": "Isaiah Land",
+      "DT2": "Otito Ogbonnia"
+    }
+  },
+  "DEN": {
+    "name": "Denver Broncos",
+    "offense": {
+      "TE": "Nate Adkins",
+      "RB": "Tyler Badie",
+      "WR1": "Michael Bandy",
+      "LT": "Garett Bolles",
+      "WR2": "Pat Bryant",
+      "FB": "Michael Burton",
+      "RT": "Marques Cox",
+      "C": "Michael Deiter",
+      "QB": "Sam Ehlinger",
+      "WR3": "Troy Franklin",
+      "LG": "Nick Gargiulo",
+      "RG": "Nash Jones"
+    },
+    "defense": {
+      "LCB": "Kris Abrams-Draine",
+      "DE1": "Zach Allen",
+      "SS": "Tycen Anderson",
+      "MLB": "Levelle Bailey",
+      "RCB": "Jahdae Barron",
+      "WILL": "Nik Bonitto",
+      "SAM": "Jonathon Cooper",
+      "DE2": "Matt Henningsen",
+      "FS": "Talanoa Hufanga",
+      "DT1": "Jordan Jackson",
+      "DT2": "D.J. Jones"
+    }
+  },
+  "DET": {
+    "name": "Detroit Lions",
+    "offense": {
+      "LG": "Kayode Awosika",
+      "LT": "Larry Borom",
+      "QB": "Teddy Bridgewater",
+      "RT": "Devin Cochran",
+      "C": "Trystan Colon",
+      "TE": "Tyler Conklin",
+      "WR1": "Malik Cunningham",
+      "WR2": "Greg Dortch",
+      "RG": "Miles Frazier",
+      "RB": "Jahmyr Gibbs",
+      "WR3": "Tom Kennedy"
+    },
+    "defense": {
+      "DE1": "Myles Adams",
+      "LCB": "Terrion Arnold",
+      "MLB": "Derrick Barnes",
+      "SS": "Brian Branch",
+      "WILL": "Jack Campbell",
+      "SAM": "Damone Clark",
+      "DE2": "Marcus Davenport",
+      "RCB": "Khalil Dorsey",
+      "FS": "Thomas Harper",
+      "DT1": "Tyler Lacy",
+      "DT2": "Alim McNeill"
+    }
+  },
+  "GB": {
+    "name": "Green Bay Packers",
+    "offense": {
+      "LG": "Aaron Banks",
+      "LT": "Brant Banks",
+      "RT": "Karsen Barnhart",
+      "RB": "Chris Brooks",
+      "TE": "McCallan Castles",
+      "WR1": "Matthew Golden",
+      "RG": "Donovan Jennings",
+      "WR2": "Jakobie Keeney-James",
+      "QB": "Jordan Love",
+      "C": "Jacob Monk",
+      "WR3": "Skyy Moore"
+    },
+    "defense": {
+      "SS": "Johnathan Baldwin",
+      "DT1": "Dante Barnett",
+      "LCB": "Shemar Bartholomew",
+      "DT2": "Warren Brinson",
+      "DE1": "Karl Brooks",
+      "FS": "Javon Bullard",
+      "MLB": "Edgerrin Cooper",
+      "DE2": "Brenton Cox Jr.",
+      "WILL": "Zaire Franklin",
+      "RCB": "Kamal Hadden",
+      "SAM": "Ty'Ron Hopper"
+    }
+  },
+  "HOU": {
+    "name": "Houston Texans",
+    "offense": {
+      "C": "Jake Andrews",
+      "WR1": "Braxton Berrios",
+      "RB": "British Brooks",
+      "LG": "Evan Brown",
+      "LT": "Trent Brown",
+      "TE": "Harrison Bryant",
+      "WR2": "Nico Collins",
+      "WR3": "Tank Dell",
+      "RT": "Aireontae Ersery",
+      "RG": "Ed Ingram",
+      "QB": "Graham Mertz"
+    },
+    "defense": {
+      "MLB": "Azeez Al-Shaair",
+      "DE1": "Will Anderson Jr.",
+      "DE2": "Denico Autry",
+      "SS": "Reed Blankenship",
+      "LCB": "Myles Bryant",
+      "FS": "Calen Bullock",
+      "RCB": "Ajani Carter",
+      "DT1": "Folorunso Fatukasi",
+      "DT2": "Kyonte Hamilton",
+      "WILL": "Jake Hansen",
+      "SAM": "Jamal Hill"
+    }
+  },
+  "IND": {
+    "name": "Indianapolis Colts",
+    "offense": {
+      "RB": "Ameer Abdullah",
+      "TE": "Mo Alie-Cox",
+      "C": "Tanor Bortolini",
+      "WR1": "Josh Downs",
+      "WR2": "Ashton Dulin",
+      "LT": "Blake Freeland",
+      "LG": "Matt Goncalves",
+      "WR3": "Anthony Gould",
+      "RG": "LaDarius Henderson",
+      "QB": "Seth Henigan",
+      "RT": "Bayron Matos"
+    },
+    "defense": {
+      "DT1": "Adetomiwa Adebawore",
+      "MLB": "Austin Ajiake",
+      "LCB": "Mekhi Blackmon",
+      "DT2": "DeForest Buckner",
+      "WILL": "John Bullock",
+      "SS": "Cam Bynum",
+      "SAM": "Jaylon Carlies",
+      "RCB": "Rob Carter Jr.",
+      "DE1": "Micheal Clemons",
+      "FS": "Wyett Ekeler",
+      "DE2": "Viliami Fehoko Jr."
+    }
+  },
+  "JAX": {
+    "name": "Jacksonville Jaguars",
+    "offense": {
+      "RB": "LeQuint Allen Jr.",
+      "QB": "Carter Bradley",
+      "WR1": "Chandler Brayboy",
+      "C": "Jerome Carvin",
+      "WR2": "Joshua Cephus",
+      "LG": "Ezra Cleveland",
+      "RG": "Chuma Edoga",
+      "LT": "Anton Harrison",
+      "TE": "Patrick Herbert",
+      "RT": "Cooper Hodges",
+      "WR3": "Travis Hunter"
+    },
+    "defense": {
+      "MLB": "Yasir Abdullah",
+      "DT1": "Arik Armstead",
+      "LCB": "Christian Braswell",
+      "RCB": "Montaric Brown",
+      "WILL": "Branson Combs",
+      "DE1": "Matt Dickerson",
+      "SAM": "Dennis Gardeck",
+      "DE2": "B.J. Green II",
+      "DT2": "DaVon Hamilton",
+      "SS": "Antonio Johnson",
+      "FS": "Rayuan Lane III"
+    }
+  },
+  "KC": {
+    "name": "Kansas City Chiefs",
+    "offense": {
+      "WR1": "Andrew Armstrong",
+      "TE": "Jake Briningstool",
+      "WR2": "Jason Brownlee",
+      "LG": "Mike Caliendo",
+      "RB": "Emari Demercado",
+      "LT": "Ethan Driskell",
+      "QB": "Justin Fields",
+      "RT": "Chukwuebuka Godrick",
+      "RG": "C.J. Hanson",
+      "WR3": "Jimmy Holiday",
+      "C": "Creed Humphrey"
+    },
+    "defense": {
+      "DE1": "Felix Anudike-Uzomah",
+      "MLB": "Kam Arnold",
+      "WILL": "Jeffrey Bassa",
+      "SAM": "Nick Bolton",
+      "SS": "Deon Bush",
+      "FS": "Chamarri Conner",
+      "DE2": "Ethan Downs",
+      "LCB": "Kristian Fulton",
+      "DT1": "Marcus Harris",
+      "DT2": "Chris Jones",
+      "RCB": "Kevin Knowles"
+    }
+  },
+  "LV": {
+    "name": "Las Vegas Raiders",
+    "offense": {
+      "WR1": "Alex Bachman",
+      "WR2": "Jack Bech",
+      "TE": "Brock Bowers",
+      "LG": "Spencer Burford",
+      "RB": "Chris Collier",
+      "RG": "McClendon Curtis",
+      "WR3": "Phillip Dorsett II",
+      "LT": "DJ Glaze",
+      "RT": "Charles Grant",
+      "C": "Tyler Linderbaum",
+      "QB": "Aidan O'Connell"
+    },
+    "defense": {
+      "MLB": "Jamal Adams",
+      "LCB": "Chigozie Anusiem",
+      "DT1": "Thomas Booker IV",
+      "DT2": "Adam Butler",
+      "SS": "Jeremy Chinn",
+      "DE1": "Maxx Crosby",
+      "WILL": "Jamin Davis",
+      "SAM": "Nakobe Dean",
+      "FS": "Terrell Edmunds",
+      "DE2": "Jahfari Harvey",
+      "RCB": "Darnay Holmes"
+    }
+  },
+  "LAC": {
+    "name": "Los Angeles Chargers",
+    "offense": {
+      "WR1": "Keenan Allen",
+      "LT": "Joe Alt",
+      "C": "Tyler Biadasz",
+      "WR2": "Dalevon Campbell",
+      "LG": "Ben Cleveland",
+      "WR3": "Derius Davis",
+      "TE": "Tucker Fisk",
+      "RB": "Omarion Hampton",
+      "RT": "Bobby Hart",
+      "QB": "Justin Herbert",
+      "FB": "Alec Ingold",
+      "RG": "Trevor Penning"
+    },
+    "defense": {
+      "DT1": "Jamaree Caldwell",
+      "MLB": "Junior Colson",
+      "WILL": "Bud Dupree",
+      "SAM": "Troy Dye",
+      "DT2": "Justin Eboigbe",
+      "LCB": "Cam Hart",
+      "RCB": "Donte Jackson",
+      "SS": "Derwin James Jr.",
+      "FS": "Tony Jefferson"
+    }
+  },
+  "LAR": {
+    "name": "Los Angeles Rams",
+    "offense": {
+      "WR1": "Davante Adams",
+      "TE": "Davis Allen",
+      "LT": "AJ Arcuri",
+      "LG": "Steve Avila",
+      "QB": "Stetson Bennett IV",
+      "RG": "Wyatt Bowles",
+      "RB": "Blake Corum",
+      "WR2": "Tru Edwards",
+      "RT": "D.J. Humphries",
+      "C": "Beaux Limmer",
+      "WR3": "Konata Mumpfield"
+    },
+    "defense": {
+      "SS": "Kam Curl",
+      "DE1": "Tyler Davis",
+      "MLB": "Shaun Dolac",
+      "DE2": "Braden Fiske",
+      "LCB": "Emmanuel Forbes Jr.",
+      "DT1": "Poona Ford",
+      "DT2": "Ty Hamilton",
+      "WILL": "Nick Hampton",
+      "FS": "Tanner Ingle",
+      "RCB": "Alex Johnson",
+      "SAM": "Nate Landman"
+    }
+  },
+  "MIA": {
+    "name": "Miami Dolphins",
+    "offense": {
+      "RB": "De'Von Achane",
+      "WR1": "Tutu Atwell",
+      "C": "Aaron Brewer",
+      "LG": "Daniel Brunskill",
+      "LT": "Yodny Cajuste",
+      "TE": "Jalin Conyers",
+      "RT": "Braeden Daniels",
+      "WR2": "Dee Eskridge",
+      "QB": "Quinn Ewers",
+      "WR3": "AJ Henning",
+      "RG": "Germain Ifedi"
+    },
+    "defense": {
+      "SS": "Zayne Anderson",
+      "LCB": "Alex Austin",
+      "RCB": "Darrell Baker Jr.",
+      "DE1": "Robert Beal Jr.",
+      "MLB": "Quinton Bell",
+      "DT1": "Zeek Biggers",
+      "WILL": "Jordyn Brooks",
+      "FS": "Omar Brown",
+      "DT2": "Matthew Butler",
+      "DE2": "Seth Coleman",
+      "SAM": "Tyrel Dodson"
+    }
+  },
+  "MIN": {
+    "name": "Minnesota Vikings",
+    "offense": {
+      "WR1": "Jordan Addison",
+      "TE": "Gavin Bartholomew",
+      "C": "Blake Brandel",
+      "QB": "Max Brosmer",
+      "LG": "Henry Byrd",
+      "LT": "Christian Darrisaw",
+      "WR2": "Joaquin Davis",
+      "RT": "Caleb Etienne",
+      "WR3": "Tai Felton",
+      "RG": "Will Fries",
+      "RB": "Aaron Jones Sr."
+    },
+    "defense": {
+      "MLB": "Tyler Batty",
+      "WILL": "Blake Cashman",
+      "SAM": "Chaz Chambliss",
+      "LCB": "Kahlef Hailassie",
+      "DT1": "Jaylon Hutchings",
+      "DE1": "Tyrion Ingram-Dawkins",
+      "SS": "Theo Jackson",
+      "RCB": "Dwight McGlothern",
+      "FS": "Joshua Metellus",
+      "DT2": "Jalen Redmond",
+      "DE2": "Elijah Williams"
+    }
+  },
+  "NE": {
+    "name": "New England Patriots",
+    "offense": {
+      "WR1": "Kayshon Boutte",
+      "LG": "Ben Brown",
+      "LT": "Marcus Bryant",
+      "RG": "Mehki Butler",
+      "RT": "Will Campbell",
+      "WR2": "Efton Chism III",
+      "QB": "Tommy DeVito",
+      "TE": "CJ Dippre",
+      "WR3": "Romeo Doubs",
+      "FB": "Reggie Gilliam",
+      "RB": "TreVeyon Henderson"
+    },
+    "defense": {
+      "DT1": "Christian Barmore",
+      "MLB": "K.J. Britt",
+      "SS": "Mike Brown",
+      "FS": "Kevin Byard III",
+      "LCB": "Brandon Crossley",
+      "RCB": "Carlton Davis III",
+      "DT2": "Cory Durden",
+      "WILL": "Christian Elliss",
+      "SAM": "Amari Gainer",
+      "DE1": "Dre'Mont Jones",
+      "DE2": "Niko Lalos"
+    }
+  },
+  "NO": {
+    "name": "New Orleans Saints",
+    "offense": {
+      "WR1": "Damien Alford",
+      "WR2": "Kevin Austin Jr.",
+      "LT": "Kelvin Banks Jr.",
+      "WR3": "Ronnie Bell",
+      "RB": "Ty Chandler",
+      "C": "Will Clapp",
+      "LG": "David Edwards",
+      "TE": "Noah Fant",
+      "RT": "Taliese Fuaga",
+      "QB": "Taysom Hill",
+      "RG": "Dillon Radunz"
+    },
+    "defense": {
+      "SS": "Ugo Amadi",
+      "LCB": "Dalys Beanum",
+      "RCB": "Beanie Bishop Jr.",
+      "FS": "Julian Blackmon",
+      "DT1": "Khristian Boyd",
+      "DT2": "Bryan Bresee",
+      "DE1": "Jonathan Bullard",
+      "DE2": "Myles Cole",
+      "MLB": "Kaden Elliss",
+      "WILL": "Jaylan Ford",
+      "SAM": "Isaiah Stalbird"
+    }
+  },
+  "NYG": {
+    "name": "New York Giants",
+    "offense": {
+      "WR1": "Calvin Austin III",
+      "WR2": "Dalen Cambre",
+      "WR3": "Beaux Collins",
+      "TE": "Tanner Conner",
+      "QB": "Jaxson Dart",
+      "LT": "Jermaine Eluemunor",
+      "LG": "Joshua Ezeudu",
+      "RB": "Eric Gray",
+      "RT": "Reid Holskey",
+      "C": "Bryan Hudson",
+      "RG": "Jake Kubas",
+      "FB": "Patrick Ricard"
+    },
+    "defense": {
+      "LCB": "Paulson Adebo",
+      "DT1": "Darius Alexander",
+      "RCB": "Deonte Banks",
+      "MLB": "Zaire Barnes",
+      "WILL": "Swayze Bozeman",
+      "SS": "Beau Brade",
+      "SAM": "Brian Burns",
+      "FS": "Elijah Campbell",
+      "DT2": "Elijah Chatman",
+      "DE1": "Chauncey Golston",
+      "DE2": "DeMarvin Leal"
+    }
+  },
+  "NYJ": {
+    "name": "New York Jets",
+    "offense": {
+      "RB": "Braelon Allen",
+      "FB": "Andrew Beck",
+      "WR1": "Irvin Charles",
+      "QB": "Brady Cook",
+      "WR2": "Mac Dalena",
+      "LT": "Olu Fashanu",
+      "LG": "Liam Fornadel",
+      "C": "Gus Hartwig",
+      "RG": "Marquis Hayes",
+      "WR3": "Tyler Johnson",
+      "RT": "Armand Membou",
+      "TE": "Jeremy Ruckert"
+    },
+    "defense": {
+      "DE1": "Tyler Baron",
+      "SS": "Dane Belton",
+      "LCB": "Kris Boyd",
+      "DT1": "Jowon Briggs",
+      "RCB": "Tre Brown",
+      "FS": "Andre Cisco",
+      "MLB": "Demario Davis",
+      "DE2": "Paschal Ekeji Jr.",
+      "DT2": "Jack Heflin",
+      "WILL": "Cam Jones",
+      "SAM": "Kobe King"
+    }
+  },
+  "PHI": {
+    "name": "Philadelphia Eagles",
+    "offense": {
+      "RB": "Saquon Barkley",
+      "TE": "Jaheim Bell",
+      "WR1": "A.J. Brown",
+      "WR2": "Hollywood Brown",
+      "WR3": "Darius Cooper",
+      "QB": "Andy Dalton",
+      "LG": "Landon Dickerson",
+      "LT": "Myles Hinton",
+      "RT": "Fred Johnson",
+      "C": "Cam Jurgens",
+      "RG": "Tyler Steen",
+      "FB": "Ben VanSumeren"
+    },
+    "defense": {
+      "MLB": "Zack Baun",
+      "LCB": "Jakorian Bennett",
+      "WILL": "Chance Campbell",
+      "SAM": "Jihaad Campbell",
+      "DT1": "Jalen Carter",
+      "RCB": "Michael Carter II",
+      "DT2": "Jordan Davis",
+      "SS": "Marcus Epps",
+      "DE1": "Brandon Graham",
+      "DE2": "Ta'Quon Graham",
+      "FS": "Andrew Mukuba"
+    }
+  },
+  "PIT": {
+    "name": "Pittsburgh Steelers",
+    "offense": {
+      "LG": "Spencer Anderson",
+      "WR1": "Cole Burgess",
+      "LT": "Dylan Cook",
+      "RB": "Rico Dowdle",
+      "RT": "Jack Driscoll",
+      "C": "Zach Frazier",
+      "TE": "Pat Freiermuth",
+      "QB": "Will Howard",
+      "RG": "Steven Jones",
+      "WR2": "DK Metcalf",
+      "WR3": "Scotty Miller"
+    },
+    "defense": {
+      "DT1": "Kyler Baugh",
+      "DT2": "Keeanu Benton",
+      "DE1": "Yahya Black",
+      "SS": "Jaquan Brisker",
+      "MLB": "Carson Bruener",
+      "FS": "Sebastian Castro",
+      "LCB": "Jamel Dean",
+      "RCB": "Brandin Echols",
+      "DE2": "Anthony Goodlow",
+      "WILL": "Malik Harrison",
+      "SAM": "Nick Herbig"
+    }
+  },
+  "SF": {
+    "name": "San Francisco 49ers",
+    "offense": {
+      "WR1": "Brandon Aiyuk",
+      "LT": "Isaac Alarcon",
+      "LG": "Ben Bartch",
+      "WR2": "Junior Bergen",
+      "C": "Jake Brendel",
+      "RG": "Connor Colby",
+      "WR3": "Jacob Cowing",
+      "TE": "Luke Farrell",
+      "RB": "Isaac Guerendo",
+      "QB": "Mac Jones",
+      "FB": "Kyle Juszczyk",
+      "RT": "Vederian Lowe"
+    },
+    "defense": {
+      "DT1": "Evan Anderson",
+      "LCB": "Eli Apple",
+      "MLB": "Tatum Bethune",
+      "DE1": "Nick Bosa",
+      "DE2": "William Bradley-King",
+      "SS": "Ji'Ayir Brown",
+      "RCB": "Derrick Canteen",
+      "DT2": "Alfred Collins",
+      "WILL": "Milo Eifler",
+      "SAM": "Andrew Farmer",
+      "FS": "Darrick Forrest"
+    }
+  },
+  "SEA": {
+    "name": "Seattle Seahawks",
+    "offense": {
+      "RB": "Cam Akers",
+      "TE": "Elijah Arroyo",
+      "WR1": "Jake Bobo",
+      "LG": "Anthony Bradford",
+      "WR2": "Tyrone Broden",
+      "LT": "Logan Brown",
+      "RG": "Bryce Cabeldue",
+      "RT": "Charles Cross",
+      "QB": "Sam Darnold",
+      "WR3": "Montorie Foster Jr.",
+      "C": "Federico Maranges",
+      "FB": "Robbie Ouzts"
+    },
+    "defense": {
+      "SS": "Nick Emmanwori",
+      "FS": "AJ Finley",
+      "MLB": "Jalan Gaines",
+      "WILL": "Derick Hall",
+      "LCB": "Noah Igbinoghene",
+      "SAM": "Jared Ivey",
+      "RCB": "Josh Jobe",
+      "DE1": "DeMarcus Lawrence",
+      "DT1": "Rylie Mills",
+      "DE2": "Mike Morris",
+      "DT2": "Byron Murphy II"
+    }
+  },
+  "TB": {
+    "name": "Tampa Bay Buccaneers",
+    "offense": {
+      "C": "Graham Barton",
+      "QB": "Connor Bazelak",
+      "LG": "Ben Bredeson",
+      "LT": "Benjamin Chukwuma",
+      "TE": "Devin Culp",
+      "WR1": "Emeka Egbuka",
+      "RG": "Dan Feeney",
+      "RT": "Marshall Foerner",
+      "RB": "Kenneth Gainwell",
+      "WR2": "Chris Godwin Jr.",
+      "WR3": "Garrett Greene"
+    },
+    "defense": {
+      "MLB": "Alex Anzalone",
+      "SS": "Marcus Banks",
+      "WILL": "Chris Braswell",
+      "SAM": "Lavonte David",
+      "DT1": "Greg Gaines",
+      "FS": "J.T. Gray",
+      "LCB": "Josh Hayes",
+      "DT2": "Nash Hutmacher",
+      "RCB": "Zyon McCollum",
+      "DE1": "Elijah Roberts",
+      "DE2": "A'Shawn Robinson"
+    }
+  },
+  "TEN": {
+    "name": "Tennessee Titans",
+    "offense": {
+      "QB": "Brandon Allen",
+      "WR1": "Elic Ayomanor",
+      "TE": "Daniel Bellinger",
+      "RB": "Julius Chestnut",
+      "LT": "Brandon Crenshaw-Dickson",
+      "RT": "Austin Deculus",
+      "LG": "Garrett Dellinger",
+      "WR2": "Chimere Dike",
+      "RG": "Blake Hance",
+      "C": "Trey Hill",
+      "WR3": "Mason Kinsey"
+    },
+    "defense": {
+      "SS": "Tony Adams",
+      "DE1": "David Agoha",
+      "LCB": "Jalyn Armour-Davis",
+      "MLB": "Joe Bachie",
+      "WILL": "Cody Barton",
+      "FS": "Kendell Brooks",
+      "DE2": "Earnest Brown IV",
+      "RCB": "Keydrain Calligan",
+      "DT1": "Jordan Elliott",
+      "SAM": "Ali Gaye",
+      "DT2": "Timmy Horne"
+    }
+  },
+  "WSH": {
+    "name": "Washington Commanders",
+    "offense": {
+      "LG": "Nick Allegretti",
+      "LT": "Malaesala Aumavae-Laulu",
+      "TE": "John Bates",
+      "WR1": "Ja'Corey Brooks",
+      "WR2": "Dyami Brown",
+      "WR3": "Noah Brown",
+      "RG": "Brandon Coleman",
+      "RT": "Josh Conerly Jr.",
+      "RB": "Jacory Croskey-Merritt",
+      "QB": "Jayden Daniels"
+    },
+    "defense": {
+      "LCB": "Trey Amos",
+      "DE1": "Dorance Armstrong",
+      "DT1": "Ricky Barber",
+      "MLB": "Nick Bellore",
+      "SS": "Percy Butler",
+      "WILL": "Andre Carter II",
+      "SAM": "K'Lavon Chaisson",
+      "FS": "Nick Cross",
+      "DT2": "Sheldon Day",
+      "RCB": "Antonio Hamilton Sr.",
+      "DE2": "Jalyn Holmes"
+    }
+  }
+}
