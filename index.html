@@ -1906,7 +1906,7 @@ function App() {
       <div className="controls">
         {/* Offense team roster */}
         <div className="control-group">
-          <span className="control-label">Off. Roster</span>
+          <span className="control-label">Off. Roster <span style={{color:'#555',fontWeight:400}}>(2025)</span></span>
           <select value={selectedOffTeam} onChange={e => setSelectedOffTeam(e.target.value)}>
             <option value="">— Offense team —</option>
             {Object.entries(ROSTERS).sort((a, b) => a[1].name.localeCompare(b[1].name)).map(([abbr, t]) => (
@@ -1917,7 +1917,7 @@ function App() {
 
         {/* Defense team roster */}
         <div className="control-group">
-          <span className="control-label">Def. Roster</span>
+          <span className="control-label">Def. Roster <span style={{color:'#555',fontWeight:400}}>(2025)</span></span>
           <select value={selectedDefTeam} onChange={e => setSelectedDefTeam(e.target.value)}>
             <option value="">— Defense team —</option>
             {Object.entries(ROSTERS).sort((a, b) => a[1].name.localeCompare(b[1].name)).map(([abbr, t]) => (
