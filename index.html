@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Football Field Guide</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #69d2e7;
+      padding: 14px 0 8px;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      padding: 0 12px 12px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .control-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 4px;
+    }
+
+    button {
+      background: #2a2a4a;
+      color: #ccc;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 5px 11px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    button:hover { background: #3a3a5a; color: #fff; }
+    button.active { background: #3d7ebf; color: #fff; border-color: #5b9fd4; }
+
+    /* Field wrapper */
+    .field-wrap {
+      position: relative;
+      width: min(96vw, 560px);
+    }
+
+    .field-svg {
+      width: 100%;
+      display: block;
+    }
+
+    /* Player dots */
+    .player-dot {
+      cursor: pointer;
+      transition: cx 0.4s ease, cy 0.4s ease;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+    }
+
+    .player-dot circle {
+      transition: r 0.15s, opacity 0.3s;
+    }
+
+    .player-dot:hover circle { r: 11; }
+
+    .player-label {
+      pointer-events: none;
+      font-size: 8px;
+      font-weight: 700;
+      fill: #fff;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      transition: all 0.4s ease;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+
+    /* Info panel */
+    .info-panel {
+      width: min(96vw, 560px);
+      background: #16213e;
+      border: 1px solid #2a4080;
+      border-radius: 12px;
+      margin: 12px auto;
+      padding: 16px 20px;
+      min-height: 90px;
+      transition: all 0.2s;
+    }
+
+    .info-panel.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+
+    .info-header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .info-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .info-abbr {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #69d2e7;
+      background: #1e3a5f;
+      padding: 1px 7px;
+      border-radius: 4px;
+    }
+
+    .info-side {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: auto;
+    }
+
+    .info-side.offense { background: #2d4a1e; color: #82c55a; }
+    .info-side.defense { background: #4a1e1e; color: #e07070; }
+
+    .info-role {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #ccc;
+      margin-bottom: 8px;
+    }
+
+    .info-analogy {
+      font-size: 0.82rem;
+      color: #aaa;
+      font-style: italic;
+      border-left: 3px solid #3d7ebf;
+      padding-left: 10px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      justify-content: center;
+      padding: 4px 12px 16px;
+      font-size: 0.72rem;
+      color: #aaa;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+// ─── COLOR PALETTE ────────────────────────────────────────────────
+const COLORS = {
+  QB:   '#f5a623',
+  RB:   '#f5a623',
+  FB:   '#f5a623',
+  WR:   '#82c55a',
+  TE:   '#82c55a',
+  OL:   '#4a90d9',
+  DL:   '#e07070',
+  LB:   '#c86dd9',
+  DB:   '#5bc8af',
+  K:    '#aaaaaa',
+  P:    '#aaaaaa',
+};
+
+// ─── POSITION DATA ─────────────────────────────────────────────────
+const POSITIONS = {
+  // OFFENSE
+  QB: {
+    name: 'Quarterback',
+    abbr: 'QB',
+    side: 'offense',
+    color: COLORS.QB,
+    role: 'The field general. Takes the snap, then hands off, runs, or throws. Every offensive play starts with him.',
+    analogy: 'Like a point guard in basketball — he touches the ball every play and decides what happens next.',
+  },
+  LT: {
+    name: 'Left Tackle',
+    abbr: 'LT',
+    side: 'offense',
+    color: COLORS.OL,
+    role: 'Protects the QB\'s blind side (for a right-handed QB). Usually the best, most athletic offensive lineman.',
+    analogy: 'The bodyguard who covers the boss\'s back — the most important protector because you can\'t see what\'s coming.',
+  },
+  LG: {
+    name: 'Left Guard',
+    abbr: 'LG',
+    side: 'offense',
+    color: COLORS.OL,
+    role: 'Blocks defensive linemen on the inside left. Also pulls to lead block on outside runs.',
+    analogy: 'Interior offensive line — think of him as clearing a path in a crowd so the runner can get through.',
+  },
+  C: {
+    name: 'Center',
+    abbr: 'C',
+    side: 'offense',
+    color: COLORS.OL,
+    role: 'Snaps the ball to start every play. Makes blocking calls and protects the middle of the line.',
+    analogy: 'Like an offensive coordinator on the field — he communicates protection schemes to the whole line.',
+  },
+  RG: {
+    name: 'Right Guard',
+    abbr: 'RG',
+    side: 'offense',
+    color: COLORS.OL,
+    role: 'Blocks defensive linemen on the inside right. Physical run-blocker.',
+    analogy: 'The right side interior wall — keeps defenders out of the backfield.',
+  },
+  RT: {
+    name: 'Right Tackle',
+    abbr: 'RT',
+    side: 'offense',
+    color: COLORS.OL,
+    role: 'Protects the QB\'s front side and blocks for runs to the right.',
+    analogy: 'The strong-side door — holds it shut against the pass rush.',
+  },
+  WR1: {
+    name: 'Wide Receiver (X)',
+    abbr: 'WR',
+    side: 'offense',
+    color: COLORS.WR,
+    role: 'Split out wide, runs precise routes to get open. Primary deep/outside threat.',
+    analogy: 'Like a sprinter — elite speed and footwork to shake defenders and catch passes down the field.',
+  },
+  WR2: {
+    name: 'Wide Receiver (Z)',
+    abbr: 'WR',
+    side: 'offense',
+    color: COLORS.WR,
+    role: 'Lines up on the other side, often in motion pre-snap. Creates mismatches with speed and route running.',
+    analogy: 'The second option on speed dial — always ready to get open if the primary read is covered.',
+  },
+  WR3: {
+    name: 'Slot Receiver (H)',
+    abbr: 'SL',
+    side: 'offense',
+    color: COLORS.WR,
+    role: 'Lines up in the slot (between the tackle and outside WR). Runs quick routes underneath. Hard to cover.',
+    analogy: 'Like a shifty point guard driving the lane — works in tight spaces, tough to get a clean hit on.',
+  },
+  TE: {
+    name: 'Tight End',
+    abbr: 'TE',
+    side: 'offense',
+    color: COLORS.TE,
+    role: 'Lines up next to the tackle. Blocks like a lineman but also runs routes as a receiver — the ultimate hybrid.',
+    analogy: 'A power forward who can also shoot threes — physical enough to block, skilled enough to catch.',
+  },
+  RB: {
+    name: 'Running Back',
+    abbr: 'RB',
+    side: 'offense',
+    color: COLORS.RB,
+    role: 'Takes handoffs and runs with the ball. Also catches passes out of the backfield and blocks.',
+    analogy: 'The workhorse — like a midfielder who runs the most on the field every single play.',
+  },
+  FB: {
+    name: 'Fullback',
+    abbr: 'FB',
+    side: 'offense',
+    color: COLORS.FB,
+    role: 'Leads the RB through the hole as a blocker. Rarely carries the ball but is essential for power runs.',
+    analogy: 'The battering ram — clears out linebackers so the running back can find daylight.',
+  },
+
+  // DEFENSE
+  DE1: {
+    name: 'Defensive End (Left)',
+    abbr: 'DE',
+    side: 'defense',
+    color: COLORS.DL,
+    role: 'Rushes the passer from the edge and sets the edge against the run. A premium pass rush position.',
+    analogy: 'Like a blitzing point guard — pressures the QB constantly, forces quick decisions.',
+  },
+  DE2: {
+    name: 'Defensive End (Right)',
+    abbr: 'DE',
+    side: 'defense',
+    color: COLORS.DL,
+    role: 'Same role as the left DE, mirror image. Together they form the bookends of the defensive line.',
+    analogy: 'Two relentless defenders who squeeze the pocket from both sides.',
+  },
+  DT1: {
+    name: 'Defensive Tackle (3-Tech)',
+    abbr: 'DT',
+    side: 'defense',
+    color: COLORS.DL,
+    role: 'Lined up in the gap between guard and tackle. Disrupts runs inside, collapses the pocket on pass plays.',
+    analogy: 'The wrecking ball inside — takes up space and disrupts everything around him.',
+  },
+  DT2: {
+    name: 'Nose Tackle',
+    abbr: 'NT',
+    side: 'defense',
+    color: COLORS.DL,
+    role: 'Lines up directly over the center. Eats blocks so linebackers stay free. The anchor of the front.',
+    analogy: 'Like a sumo wrestler — job is to absorb two blockers and not budge an inch.',
+  },
+  MLB: {
+    name: 'Middle Linebacker',
+    abbr: 'MLB',
+    side: 'defense',
+    color: COLORS.LB,
+    role: 'The defensive QB — reads the play, makes calls, tackles everything. High-impact every down.',
+    analogy: 'Like a baseball shortstop — rangy, everywhere at once, the defensive anchor.',
+  },
+  WILL: {
+    name: 'Weakside Linebacker',
+    abbr: 'WLB',
+    side: 'defense',
+    color: COLORS.LB,
+    role: 'The weakside linebacker — faster and more rangy, often covers backs and TEs. Pursues from the backside.',
+    analogy: 'The free safety of the linebacker corps — speed over power.',
+  },
+  SAM: {
+    name: 'Strongside Linebacker',
+    abbr: 'SLB',
+    side: 'defense',
+    color: COLORS.LB,
+    role: 'Lines up on the tight end side. Physical run-stopper who can blitz and cover the TE.',
+    analogy: 'The enforcer — bigger and stronger, holds the line where the power runs come.',
+  },
+  LCB: {
+    name: 'Left Cornerback',
+    abbr: 'CB',
+    side: 'defense',
+    color: COLORS.DB,
+    role: 'Covers the outside wide receivers. Essentially plays 1-on-1 all game. Premium athleticism required.',
+    analogy: 'The shutdown corner — like a defender in soccer who man-marks the opposing star all game.',
+  },
+  RCB: {
+    name: 'Right Cornerback',
+    abbr: 'CB',
+    side: 'defense',
+    color: COLORS.DB,
+    role: 'Mirrors the left CB on the opposite side. Two corners bookend the secondary.',
+    analogy: 'The other shutdown corner — mirrors his partner on the far side of the field.',
+  },
+  FS: {
+    name: 'Free Safety',
+    abbr: 'FS',
+    side: 'defense',
+    color: COLORS.DB,
+    role: 'The deep center fielder. Roams the backfield, reads the QB\'s eyes, and makes plays on the ball.',
+    analogy: 'Like a center fielder in baseball — covers the most ground, the last line of defense.',
+  },
+  SS: {
+    name: 'Strong Safety',
+    abbr: 'SS',
+    side: 'defense',
+    color: COLORS.DB,
+    role: 'Plays closer to the line. Stops the run, covers the tight end, and can blitz. Hybrid of LB and DB.',
+    analogy: 'The enforcer of the secondary — tough enough to tackle in the box, fast enough to cover.',
+  },
+};
+
+// ─── FORMATIONS ────────────────────────────────────────────────────
+// Coordinates are percentages: x=left-right (0-100), y=top-bottom (0-100)
+// Field runs top (defense, ~5%) to bottom (offense, ~90%)
+
+const OFF_FORMATIONS = {
+  Shotgun: {
+    QB:  { x: 50, y: 67 },
+    LT:  { x: 37, y: 55 },
+    LG:  { x: 43, y: 55 },
+    C:   { x: 50, y: 55 },
+    RG:  { x: 57, y: 55 },
+    RT:  { x: 63, y: 55 },
+    TE:  { x: 70, y: 55 },
+    WR1: { x: 12, y: 55 },
+    WR2: { x: 88, y: 55 },
+    WR3: { x: 80, y: 58 },
+    RB:  { x: 59, y: 67 },
+  },
+  'I-Form': {
+    QB:  { x: 50, y: 58 },
+    LT:  { x: 37, y: 55 },
+    LG:  { x: 43, y: 55 },
+    C:   { x: 50, y: 55 },
+    RG:  { x: 57, y: 55 },
+    RT:  { x: 63, y: 55 },
+    TE:  { x: 70, y: 55 },
+    WR1: { x: 12, y: 55 },
+    WR2: { x: 88, y: 55 },
+    FB:  { x: 50, y: 65 },
+    RB:  { x: 50, y: 73 },
+  },
+  Singleback: {
+    QB:  { x: 50, y: 58 },
+    LT:  { x: 37, y: 55 },
+    LG:  { x: 43, y: 55 },
+    C:   { x: 50, y: 55 },
+    RG:  { x: 57, y: 55 },
+    RT:  { x: 63, y: 55 },
+    TE:  { x: 70, y: 55 },
+    WR1: { x: 12, y: 55 },
+    WR2: { x: 88, y: 55 },
+    WR3: { x: 80, y: 58 },
+    RB:  { x: 50, y: 67 },
+  },
+  Empty: {
+    QB:  { x: 50, y: 62 },
+    LT:  { x: 37, y: 55 },
+    LG:  { x: 43, y: 55 },
+    C:   { x: 50, y: 55 },
+    RG:  { x: 57, y: 55 },
+    RT:  { x: 63, y: 55 },
+    WR1: { x: 12, y: 55 },
+    WR2: { x: 88, y: 55 },
+    WR3: { x: 22, y: 58 },
+    TE:  { x: 70, y: 55 },
+    RB:  { x: 78, y: 58 },
+  },
+};
+
+const DEF_FORMATIONS = {
+  '4-3': {
+    DE1:  { x: 33, y: 40 },
+    DT1:  { x: 43, y: 40 },
+    DT2:  { x: 57, y: 40 },
+    DE2:  { x: 67, y: 40 },
+    WILL: { x: 40, y: 32 },
+    MLB:  { x: 50, y: 30 },
+    SAM:  { x: 63, y: 32 },
+    LCB:  { x: 12, y: 22 },
+    RCB:  { x: 88, y: 22 },
+    FS:   { x: 50, y: 15 },
+    SS:   { x: 72, y: 22 },
+  },
+  '3-4': {
+    DE1:  { x: 38, y: 40 },
+    DT2:  { x: 50, y: 40 },
+    DE2:  { x: 62, y: 40 },
+    WILL: { x: 30, y: 33 },
+    MLB:  { x: 43, y: 30 },
+    SAM:  { x: 57, y: 30 },
+    DT1:  { x: 70, y: 33 },
+    LCB:  { x: 12, y: 22 },
+    RCB:  { x: 88, y: 22 },
+    FS:   { x: 50, y: 15 },
+    SS:   { x: 72, y: 22 },
+  },
+  Nickel: {
+    DE1:  { x: 33, y: 40 },
+    DT1:  { x: 43, y: 40 },
+    DT2:  { x: 57, y: 40 },
+    DE2:  { x: 67, y: 40 },
+    WILL: { x: 43, y: 32 },
+    MLB:  { x: 57, y: 32 },
+    LCB:  { x: 12, y: 22 },
+    RCB:  { x: 88, y: 22 },
+    SS:   { x: 30, y: 25 },
+    FS:   { x: 50, y: 15 },
+    SAM:  { x: 72, y: 22 },
+  },
+  Dime: {
+    DE1:  { x: 33, y: 40 },
+    DT1:  { x: 43, y: 40 },
+    DT2:  { x: 57, y: 40 },
+    DE2:  { x: 67, y: 40 },
+    WILL: { x: 50, y: 33 },
+    LCB:  { x: 12, y: 22 },
+    RCB:  { x: 88, y: 22 },
+    SS:   { x: 30, y: 25 },
+    FS:   { x: 50, y: 15 },
+    SAM:  { x: 72, y: 22 },
+    MLB:  { x: 70, y: 25 },
+  },
+};
+
+// ─── FIELD SVG ─────────────────────────────────────────────────────
+function FieldSVG({ players, onSelect, selected, view }) {
+  return (
+    <svg
+      className="field-svg"
+      viewBox="0 0 400 340"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Field background */}
+      <rect x="20" y="10" width="360" height="320" rx="4" fill="#2d6a2d" />
+
+      {/* End zones */}
+      <rect x="20" y="10"  width="360" height="36" rx="4" fill="#1d5a1d" />
+      <rect x="20" y="294" width="360" height="36" rx="4" fill="#1d5a1d" />
+
+      {/* Yard lines */}
+      {[10,20,30,40,50,40,30,20,10].map((_, i) => {
+        const y = 46 + i * 28;
+        return (
+          <g key={i}>
+            <line x1="20" y1={y} x2="380" y2={y} stroke="#4a8a4a" strokeWidth="0.8" strokeDasharray="4,4" />
+          </g>
+        );
+      })}
+
+      {/* LOS (line of scrimmage) */}
+      <line x1="20" y1="192" x2="380" y2="192" stroke="rgba(255,255,150,0.35)" strokeWidth="1.5" />
+
+      {/* Hash marks */}
+      {Array.from({ length: 9 }, (_, i) => 46 + i * 28).map((y, i) => (
+        <g key={i}>
+          <line x1="155" y1={y - 5} x2="155" y2={y + 5} stroke="#4a8a4a" strokeWidth="1" />
+          <line x1="245" y1={y - 5} x2="245" y2={y + 5} stroke="#4a8a4a" strokeWidth="1" />
+        </g>
+      ))}
+
+      {/* Players */}
+      {players.map(({ id, x, y, color, label, visible }) => {
+        if (!visible) return null;
+        const px = 20 + x * 3.6;
+        const py = 10 + y * 3.2;
+        const isSelected = selected === id;
+        return (
+          <g
+            key={id}
+            className="player-dot"
+            onClick={() => onSelect(id)}
+            transform={`translate(${px}, ${py})`}
+          >
+            <circle
+              r={isSelected ? 13 : 10}
+              fill={color}
+              stroke={isSelected ? '#fff' : 'rgba(0,0,0,0.4)'}
+              strokeWidth={isSelected ? 2.5 : 1.5}
+              opacity={0.92}
+            />
+            <text
+              className="player-label"
+              x="0"
+              y="0.5"
+              style={{ fontSize: label.length > 2 ? '6px' : '8px' }}
+            >
+              {label}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+// ─── MAIN APP ──────────────────────────────────────────────────────
+function App() {
+  const [offForm, setOffForm] = useState('Shotgun');
+  const [defForm, setDefForm] = useState('4-3');
+  const [view, setView]       = useState('both'); // 'both' | 'offense' | 'defense'
+  const [selected, setSelected] = useState(null);
+
+  const offPositions = OFF_FORMATIONS[offForm];
+  const defPositions = DEF_FORMATIONS[defForm];
+
+  // Build player list
+  const players = [
+    ...Object.entries(offPositions).map(([id, pos]) => ({
+      id,
+      x: pos.x,
+      y: pos.y,
+      color: POSITIONS[id]?.color || COLORS.RB,
+      label: POSITIONS[id]?.abbr || id,
+      visible: view !== 'defense',
+    })),
+    ...Object.entries(defPositions).map(([id, pos]) => ({
+      id,
+      x: pos.x,
+      y: pos.y,
+      color: POSITIONS[id]?.color || COLORS.DL,
+      label: POSITIONS[id]?.abbr || id,
+      visible: view !== 'offense',
+    })),
+  ];
+
+  const handleSelect = useCallback((id) => {
+    setSelected(prev => prev === id ? null : id);
+  }, []);
+
+  const info = selected ? POSITIONS[selected] : null;
+
+  const legendItems = [
+    { label: 'QB / RB', color: COLORS.QB },
+    { label: 'WR / TE', color: COLORS.WR },
+    { label: 'O-Line',  color: COLORS.OL },
+    { label: 'D-Line',  color: COLORS.DL },
+    { label: 'LB',      color: COLORS.LB },
+    { label: 'DB',      color: COLORS.DB },
+  ];
+
+  return (
+    <div>
+      <h1>⚡ Football Field Guide</h1>
+
+      <div className="controls">
+        {/* View toggle */}
+        <div className="control-group">
+          <span className="control-label">View</span>
+          <div className="btn-row">
+            {['offense','both','defense'].map(v => (
+              <button key={v} className={view === v ? 'active' : ''} onClick={() => setView(v)}>
+                {v === 'both' ? 'Both' : v.charAt(0).toUpperCase() + v.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Offense formation */}
+        <div className="control-group">
+          <span className="control-label">Offense</span>
+          <div className="btn-row">
+            {Object.keys(OFF_FORMATIONS).map(f => (
+              <button key={f} className={offForm === f ? 'active' : ''} onClick={() => { setOffForm(f); setSelected(null); }}>
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Defense formation */}
+        <div className="control-group">
+          <span className="control-label">Defense</span>
+          <div className="btn-row">
+            {Object.keys(DEF_FORMATIONS).map(f => (
+              <button key={f} className={defForm === f ? 'active' : ''} onClick={() => { setDefForm(f); setSelected(null); }}>
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="field-wrap">
+        <FieldSVG
+          players={players}
+          onSelect={handleSelect}
+          selected={selected}
+          view={view}
+        />
+      </div>
+
+      {/* Info panel */}
+      <div className={`info-panel ${info ? '' : 'empty'}`}>
+        {info ? (
+          <div>
+            <div className="info-header">
+              <span className="info-name">{info.name}</span>
+              <span className="info-abbr">{info.abbr}</span>
+              <span className={`info-side ${info.side}`}>{info.side}</span>
+            </div>
+            <p className="info-role">{info.role}</p>
+            <p className="info-analogy">{info.analogy}</p>
+          </div>
+        ) : (
+          <span>Tap any player dot to learn their role</span>
+        )}
+      </div>
+
+      {/* Legend */}
+      <div className="legend">
+        {legendItems.map(({ label, color }) => (
+          <div key={label} className="legend-item">
+            <div className="legend-dot" style={{ background: color }} />
+            <span>{label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
