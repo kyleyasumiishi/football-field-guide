@@ -109,8 +109,8 @@
     /* Player dots */
     .player-dot {
       cursor: pointer;
-      transition: cx 0.4s ease, cy 0.4s ease;
       filter: drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+      transition: transform 0.55s ease;
     }
 
     .player-dot circle {
@@ -118,6 +118,34 @@
     }
 
     .player-dot:hover circle { r: 11; }
+
+    /* Play controls */
+    .run-btn {
+      background: #1e4a1e;
+      color: #82c55a;
+      border: 1.5px solid #2a6a2a;
+      border-radius: 8px;
+      padding: 7px 18px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: all 0.15s;
+    }
+    .run-btn:hover:not(:disabled) { background: #2a6a2a; color: #fff; }
+    .run-btn:disabled { opacity: 0.4; cursor: default; }
+    .run-btn.reset { background: #2a2a4a; color: #aaa; border-color: #444; }
+    .run-btn.reset:hover { background: #3a3a5a; color: #fff; }
+
+    .play-type-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+    }
+    .play-type-run  { background: #3a2a10; color: #f5a623; border: 1px solid #6a4a20; }
+    .play-type-pass { background: #1a2a4a; color: #69d2e7; border: 1px solid #2a4a7a; }
 
     .player-label {
       pointer-events: none;
@@ -799,6 +827,79 @@ const DEF_FORMATIONS = {
   },
 };
 
+// ─── PLAY DIAGRAMS ─────────────────────────────────────────────────
+// phases: array of position overrides applied sequentially (600ms apart)
+// Only specify players that move each phase — others stay put
+const PLAYS = {
+  'inside-zone': {
+    name: 'Inside Zone',
+    type: 'Run',
+    offForm: 'I-Form',
+    defForm: '4-3',
+    tags: ['Run', 'Short yardage'],
+    description: 'The bread-and-butter run play. Every OL steps playside together, creating a moving wall. The RB reads the blocks and cuts to daylight — usually between the guards and tackles.',
+    phases: [
+      // Snap: OL fires out, QB turns to hand off, FB leads
+      { LT:{x:37,y:52}, LG:{x:43,y:52}, C:{x:50,y:52}, RG:{x:57,y:52}, RT:{x:63,y:52},
+        TE:{x:70,y:52}, QB:{x:50,y:60}, FB:{x:50,y:62}, RB:{x:50,y:68} },
+      // FB leads through hole, RB takes handoff and hits crease
+      { LT:{x:36,y:49}, LG:{x:43,y:49}, C:{x:50,y:49}, RG:{x:57,y:49}, RT:{x:64,y:49},
+        TE:{x:70,y:49}, QB:{x:48,y:63}, FB:{x:50,y:52}, RB:{x:51,y:59} },
+      // RB bursts through hole
+      { FB:{x:50,y:46}, RB:{x:52,y:47}, QB:{x:47,y:65} },
+    ],
+  },
+  'four-verts': {
+    name: 'Four Verticals',
+    type: 'Pass',
+    offForm: 'Shotgun',
+    defForm: '4-3',
+    tags: ['Pass', 'Deep'],
+    description: 'All four receivers sprint straight downfield. Stretches every defensive zone vertically. The QB reads the free safety — if he shades one side, the QB throws to the vacated side.',
+    phases: [
+      // Snap: QB drops, receivers release off the line
+      { QB:{x:50,y:71}, WR1:{x:12,y:45}, WR2:{x:88,y:45}, WR3:{x:80,y:46}, TE:{x:70,y:46}, RB:{x:57,y:69} },
+      // Routes developing deep
+      { WR1:{x:12,y:28}, WR2:{x:88,y:28}, WR3:{x:79,y:29}, TE:{x:68,y:26}, QB:{x:50,y:73} },
+      // QB throws — receivers at full depth
+      { WR1:{x:12,y:14}, WR2:{x:88,y:14}, WR3:{x:78,y:15}, TE:{x:66,y:17}, QB:{x:52,y:70} },
+    ],
+  },
+  'bubble-screen': {
+    name: 'Bubble Screen',
+    type: 'Pass',
+    offForm: 'Shotgun',
+    defForm: 'Nickel',
+    tags: ['Pass', 'Short', 'Quick'],
+    description: 'A fast horizontal throw to the slot receiver bubbling into the flat. The outside WR immediately releases downfield to block the cornerback. Basically a fancy handoff — get a playmaker in open space.',
+    phases: [
+      // Snap: slot receiver bubbles out, outside WR releases to block
+      { QB:{x:50,y:70}, WR3:{x:74,y:62}, WR2:{x:85,y:50}, WR1:{x:12,y:46} },
+      // QB throws immediately to flat
+      { QB:{x:50,y:68}, WR3:{x:68,y:64}, WR2:{x:86,y:44} },
+      // WR3 catches and turns upfield
+      { WR3:{x:62,y:50}, WR2:{x:85,y:40} },
+    ],
+  },
+  'play-action-boot': {
+    name: 'Play Action Boot',
+    type: 'Pass',
+    offForm: 'I-Form',
+    defForm: '4-3',
+    tags: ['Pass', 'Play action', 'Misdirection'],
+    description: 'QB fakes a handoff to freeze the linebackers, then bootlegs to the opposite side. The TE sneaks out on a corner route behind the confused LBs. Classic misdirection — the defense reacts to the fake and is completely out of position.',
+    phases: [
+      // Snap: QB fakes handoff, RB dives into line
+      { QB:{x:50,y:60}, RB:{x:50,y:64}, FB:{x:50,y:60} },
+      // QB bootlegs right, TE releases, WRs run routes
+      { QB:{x:65,y:57}, RB:{x:50,y:53}, FB:{x:49,y:56},
+        TE:{x:74,y:44}, WR1:{x:18,y:38}, WR2:{x:85,y:42} },
+      // QB throws on the run to TE on corner route
+      { QB:{x:70,y:54}, TE:{x:79,y:34}, WR1:{x:22,y:28}, WR2:{x:83,y:32} },
+    ],
+  },
+};
+
 // ─── TAG HELPER ────────────────────────────────────────────────────
 function tagClass(tag) {
   const t = tag.toLowerCase();
@@ -817,7 +918,7 @@ function Tags({ tags }) {
 }
 
 // ─── FIELD SVG ─────────────────────────────────────────────────────
-function FieldSVG({ players, onSelect, selected, view }) {
+function FieldSVG({ players, onSelect, selected, view, routeLines }) {
   return (
     <svg
       className="field-svg"
@@ -852,6 +953,19 @@ function FieldSVG({ players, onSelect, selected, view }) {
         </g>
       ))}
 
+      {/* Route trails */}
+      {routeLines && routeLines.map(({ id, points, color }) => (
+        <polyline
+          key={`route-${id}`}
+          points={points.map(p => `${20 + p.x * 3.6},${10 + p.y * 3.2}`).join(' ')}
+          fill="none"
+          stroke={color}
+          strokeWidth="1.5"
+          strokeDasharray="4,3"
+          opacity="0.5"
+        />
+      ))}
+
       {/* Players */}
       {players.map(({ id, x, y, color, label, visible }) => {
         if (!visible) return null;
@@ -863,7 +977,7 @@ function FieldSVG({ players, onSelect, selected, view }) {
             key={id}
             className="player-dot"
             onClick={() => onSelect(id)}
-            transform={`translate(${px}, ${py})`}
+            style={{ transform: `translate(${px}px, ${py}px)` }}
           >
             <circle
               r={isSelected ? 13 : 10}
@@ -891,35 +1005,87 @@ function FieldSVG({ players, onSelect, selected, view }) {
 function App() {
   const [offForm, setOffForm] = useState('Shotgun');
   const [defForm, setDefForm] = useState('4-3');
-  const [view, setView]       = useState('both'); // 'both' | 'offense' | 'defense'
+  const [view, setView]       = useState('both');
   const [selected, setSelected] = useState(null);
+  const [selectedPlay, setSelectedPlay] = useState('');
+  const [animPositions, setAnimPositions] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasRun, setHasRun] = useState(false);
+
+  const play = selectedPlay ? PLAYS[selectedPlay] : null;
+
+  const handleSelectPlay = (key) => {
+    setSelectedPlay(key);
+    setAnimPositions(null);
+    setHasRun(false);
+    setSelected(null);
+    if (key) {
+      const p = PLAYS[key];
+      setOffForm(p.offForm);
+      setDefForm(p.defForm);
+      setView('both');
+    }
+  };
+
+  const runPlay = () => {
+    if (!play || isPlaying) return;
+    setIsPlaying(true);
+    setHasRun(true);
+    setAnimPositions({});
+    play.phases.forEach((phase, i) => {
+      setTimeout(() => {
+        setAnimPositions(prev => ({ ...prev, ...phase }));
+        if (i === play.phases.length - 1) setIsPlaying(false);
+      }, i * 650);
+    });
+  };
+
+  const resetPlay = () => {
+    setAnimPositions(null);
+    setHasRun(false);
+  };
 
   const offPositions = OFF_FORMATIONS[offForm];
   const defPositions = DEF_FORMATIONS[defForm];
 
-  // Build player list
+  // Build player list, merging anim overrides
   const players = [
-    ...Object.entries(offPositions).map(([id, pos]) => ({
-      id,
-      x: pos.x,
-      y: pos.y,
-      color: POSITIONS[id]?.color || COLORS.RB,
-      label: POSITIONS[id]?.abbr || id,
-      visible: view !== 'defense',
-    })),
-    ...Object.entries(defPositions).map(([id, pos]) => ({
-      id,
-      x: pos.x,
-      y: pos.y,
-      color: POSITIONS[id]?.color || COLORS.DL,
-      label: POSITIONS[id]?.abbr || id,
-      visible: view !== 'offense',
-    })),
+    ...Object.entries(offPositions).map(([id, pos]) => {
+      const anim = animPositions?.[id];
+      return {
+        id,
+        x: anim ? anim.x : pos.x,
+        y: anim ? anim.y : pos.y,
+        color: POSITIONS[id]?.color || COLORS.RB,
+        label: POSITIONS[id]?.abbr || id,
+        visible: view !== 'defense',
+      };
+    }),
+    ...Object.entries(defPositions).map(([id, pos]) => {
+      const anim = animPositions?.[id];
+      return {
+        id,
+        x: anim ? anim.x : pos.x,
+        y: anim ? anim.y : pos.y,
+        color: POSITIONS[id]?.color || COLORS.DL,
+        label: POSITIONS[id]?.abbr || id,
+        visible: view !== 'offense',
+      };
+    }),
   ];
 
+  // Build route trail lines for active play
+  const routeLines = play ? Object.entries(offPositions).map(([id, startPos]) => {
+    const allPhases = play.phases.filter(ph => ph[id]);
+    if (allPhases.length === 0) return null;
+    const points = [startPos, ...allPhases.map(ph => ph[id])];
+    return { id, points, color: POSITIONS[id]?.color || '#fff' };
+  }).filter(Boolean) : null;
+
   const handleSelect = useCallback((id) => {
+    if (isPlaying) return;
     setSelected(prev => prev === id ? null : id);
-  }, []);
+  }, [isPlaying]);
 
   const info = selected ? POSITIONS[selected] : null;
 
@@ -952,7 +1118,7 @@ function App() {
         {/* Offense formation */}
         <div className="control-group">
           <span className="control-label">Offense</span>
-          <select value={offForm} onChange={e => { setOffForm(e.target.value); setSelected(null); }}>
+          <select value={offForm} onChange={e => { setOffForm(e.target.value); setSelected(null); }} disabled={!!selectedPlay}>
             <optgroup label="── Base ──">
               <option value="Shotgun">Shotgun</option>
               <option value="I-Form">I-Formation</option>
@@ -973,7 +1139,7 @@ function App() {
         {/* Defense formation */}
         <div className="control-group">
           <span className="control-label">Defense</span>
-          <select value={defForm} onChange={e => { setDefForm(e.target.value); setSelected(null); }}>
+          <select value={defForm} onChange={e => { setDefForm(e.target.value); setSelected(null); }} disabled={!!selectedPlay}>
             <optgroup label="── Base ──">
               <option value="4-3">4-3</option>
               <option value="3-4">3-4</option>
@@ -989,6 +1155,37 @@ function App() {
             </optgroup>
           </select>
         </div>
+
+        {/* Play selector */}
+        <div className="control-group">
+          <span className="control-label">Play Diagram</span>
+          <select value={selectedPlay} onChange={e => handleSelectPlay(e.target.value)}>
+            <option value="">— Select a play —</option>
+            <optgroup label="── Run ──">
+              <option value="inside-zone">Inside Zone</option>
+            </optgroup>
+            <optgroup label="── Pass ──">
+              <option value="four-verts">Four Verticals</option>
+              <option value="bubble-screen">Bubble Screen</option>
+              <option value="play-action-boot">Play Action Boot</option>
+            </optgroup>
+          </select>
+        </div>
+
+        {/* Run / Reset buttons */}
+        {selectedPlay && (
+          <div className="control-group">
+            <span className="control-label">&nbsp;</span>
+            <div className="btn-row">
+              <button className="run-btn" onClick={runPlay} disabled={isPlaying}>
+                {isPlaying ? '⏳ Running…' : '▶ Run Play'}
+              </button>
+              {hasRun && !isPlaying && (
+                <button className="run-btn reset" onClick={resetPlay}>↺ Reset</button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="field-wrap">
@@ -997,6 +1194,7 @@ function App() {
           onSelect={handleSelect}
           selected={selected}
           view={view}
+          routeLines={routeLines}
         />
       </div>
 
@@ -1016,6 +1214,21 @@ function App() {
           <span>Tap any player dot to learn their role</span>
         )}
       </div>
+
+      {/* Play info panel */}
+      {play && (
+        <div className="info-panel" style={{ marginTop: 0 }}>
+          <div className="info-header">
+            <span className="info-name">{play.name}</span>
+            <span className={`play-type-badge play-type-${play.type.toLowerCase()}`}>{play.type}</span>
+            {play.tags.filter(t => t !== play.type).map(t => (
+              <span key={t} className="tag tag-default">{t}</span>
+            ))}
+          </div>
+          <p className="info-role">{play.description}</p>
+          {!hasRun && <p style={{ fontSize: '0.78rem', color: '#666', marginTop: '8px', fontStyle: 'italic' }}>Press ▶ Run Play to animate the routes</p>}
+        </div>
+      )}
 
       {/* Formation info panel */}
       <div className="info-panel" style={{ marginTop: 0 }}>
