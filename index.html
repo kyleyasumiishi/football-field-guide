@@ -417,6 +417,52 @@ const POSITIONS = {
 // Coordinates are percentages: x=left-right (0-100), y=top-bottom (0-100)
 // Field runs top (defense, ~5%) to bottom (offense, ~90%)
 
+const OFF_FORMATION_INFO = {
+  Shotgun: {
+    name: 'Shotgun',
+    role: 'The QB lines up 5–7 yards behind the center instead of directly under him. Gives the QB more time to read the defense before the snap — ideal for passing situations.',
+    analogy: 'Like a pitcher who takes a longer wind-up to survey the whole field before throwing.',
+  },
+  'I-Form': {
+    name: 'I-Formation',
+    role: 'The QB is under center with the FB and RB lined up directly behind him in a vertical line ("I" shape). A power run formation — the FB leads the RB through the hole.',
+    analogy: 'A battering ram setup — the FB clears the path, the RB follows right behind.',
+  },
+  Singleback: {
+    name: 'Singleback',
+    role: 'The QB is under center with a single RB lined up directly behind him. Balanced between run and pass — versatile with two wide receivers spread wide.',
+    analogy: 'The Swiss Army knife formation — ready to run or pass without tipping your hand.',
+  },
+  Empty: {
+    name: 'Empty Backfield',
+    role: 'No RB in the backfield — everyone spreads out as a receiver. Forces the defense to cover the whole field. Almost always a passing play.',
+    analogy: 'Going all-in — you\'re telling the defense "we\'re passing" and daring them to stop it.',
+  },
+};
+
+const DEF_FORMATION_INFO = {
+  '4-3': {
+    name: '4-3 Defense',
+    role: '4 defensive linemen and 3 linebackers. The standard base defense — balanced against both the run and the pass. The 4-man line creates pressure without blitzing.',
+    analogy: 'The classic setup — like a zone defense in basketball that covers all the basics.',
+  },
+  '3-4': {
+    name: '3-4 Defense',
+    role: '3 defensive linemen and 4 linebackers. The linemen occupy blockers so the LBs stay free to roam and make plays. Creates unpredictable blitz packages.',
+    analogy: 'More linebackers means more versatility — like having extra midfielders who can attack or defend.',
+  },
+  Nickel: {
+    name: 'Nickel Defense',
+    role: 'Replaces a linebacker with a 5th defensive back (the "nickel back"). Used against 3-WR sets — trades run-stopping for pass coverage.',
+    analogy: 'Switching to a zone press in basketball when the other team goes small and fast.',
+  },
+  Dime: {
+    name: 'Dime Defense',
+    role: '6 defensive backs on the field — two extra DBs replacing linebackers. Used in obvious passing situations (3rd and long). Prioritizes coverage over run defense.',
+    analogy: 'Going full prevent defense — flood the secondary and take away every passing lane.',
+  },
+};
+
 const OFF_FORMATIONS = {
   Shotgun: {
     QB:  { x: 50, y: 67 },
@@ -709,6 +755,32 @@ function App() {
         ) : (
           <span>Tap any player dot to learn their role</span>
         )}
+      </div>
+
+      {/* Formation info panel */}
+      <div className="info-panel" style={{ marginTop: 0 }}>
+        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          {/* Offense */}
+          <div style={{ flex: 1, minWidth: '200px' }}>
+            <div className="info-header">
+              <span className="info-name">{OFF_FORMATION_INFO[offForm].name}</span>
+              <span className="info-side offense">offense</span>
+            </div>
+            <p className="info-role">{OFF_FORMATION_INFO[offForm].role}</p>
+            <p className="info-analogy">{OFF_FORMATION_INFO[offForm].analogy}</p>
+          </div>
+          {/* Divider */}
+          <div style={{ width: '1px', background: '#2a4080', flexShrink: 0 }} />
+          {/* Defense */}
+          <div style={{ flex: 1, minWidth: '200px' }}>
+            <div className="info-header">
+              <span className="info-name">{DEF_FORMATION_INFO[defForm].name}</span>
+              <span className="info-side defense">defense</span>
+            </div>
+            <p className="info-role">{DEF_FORMATION_INFO[defForm].role}</p>
+            <p className="info-analogy">{DEF_FORMATION_INFO[defForm].analogy}</p>
+          </div>
+        </div>
       </div>
 
       {/* Legend */}
