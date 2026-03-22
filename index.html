@@ -147,6 +147,53 @@
     .play-type-run  { background: #3a2a10; color: #f5a623; border: 1px solid #6a4a20; }
     .play-type-pass { background: #1a2a4a; color: #69d2e7; border: 1px solid #2a4a7a; }
 
+    /* Coverage panel */
+    .coverage-panel {
+      width: min(96vw, 560px);
+      background: #0e1a2a;
+      border: 1px solid #1a4a6a;
+      border-radius: 12px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      text-align: left;
+    }
+
+    .coverage-short {
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: #0a2a3a;
+      color: #69d2e7;
+      border: 1px solid #1a4a6a;
+      border-radius: 20px;
+      padding: 2px 9px;
+      letter-spacing: 0.04em;
+    }
+
+    .assignments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 4px 16px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #1a3a5a;
+    }
+
+    .assignment-row {
+      display: flex;
+      gap: 6px;
+      align-items: baseline;
+      font-size: 0.78rem;
+    }
+
+    .assignment-pos {
+      font-weight: 700;
+      color: #69d2e7;
+      min-width: 36px;
+      font-size: 0.7rem;
+    }
+
+    .assignment-desc { color: #bbb; }
+
     /* Counters */
     .counters-block {
       margin-top: 10px;
@@ -1110,6 +1157,135 @@ const PLAYS = {
   },
 };
 
+// ─── COVERAGE DATA ─────────────────────────────────────────────────
+// zones: SVG rects drawn on the field as semi-transparent overlays
+// assignments: what each defender is responsible for
+const COVERAGES = {
+  'cover-0': {
+    name: 'Cover 0',
+    short: 'Blitz Man',
+    description: 'Pure man coverage with NO safety help — every defender is locked on a specific player. Always paired with a heavy blitz (6+ rushers). Beat your man and it\'s a touchdown. High risk, high reward.',
+    analogy: 'Going all-in at the poker table — maximum pressure, zero safety net.',
+    zones: [],
+    assignments: {
+      LCB:  'Man on WR1 — no help',
+      RCB:  'Man on WR2 — no help',
+      SS:   'Man on TE or blitzing',
+      FS:   'Blitzing — no deep help',
+      MLB:  'Blitzing',
+      WILL: 'Man on RB',
+      SAM:  'Blitzing or man on TE',
+    },
+  },
+  'cover-1': {
+    name: 'Cover 1',
+    short: 'Man Free',
+    description: 'Man coverage on every receiver, with one free safety roaming the deep middle as a safety valve. The most common man coverage in the NFL — aggressive but with a last line of defense.',
+    analogy: 'One-on-one basketball defense with a center fielder. Everyone is locked up, but the safety can help if someone breaks free deep.',
+    zones: [
+      { x: 20, y: 10, w: 360, h: 130, color: '#5bc8af', label: 'FS Roaming Deep' },
+    ],
+    assignments: {
+      LCB:  'Man on WR1',
+      RCB:  'Man on WR2',
+      SS:   'Man on TE',
+      FS:   'Free — roams deep middle',
+      MLB:  'Man on slot / hook zone',
+      WILL: 'Man on RB',
+      SAM:  'Man on TE / blitz',
+    },
+  },
+  'cover-2': {
+    name: 'Cover 2',
+    short: 'Two-Deep Zone',
+    description: 'Two safeties split the deep field in half. CBs jam receivers at the line and play the flat underneath. LBs cover hook-curl zones. Weakness: the deep middle seam between the two safeties.',
+    analogy: 'Zone defense in basketball — everyone guards an area, not a person. Disciplined, but the seam down the middle is the weak spot.',
+    zones: [
+      { x: 20,  y: 10,  w: 180, h: 140, color: '#5bc8af' },
+      { x: 200, y: 10,  w: 180, h: 140, color: '#5bc8af' },
+      { x: 20,  y: 150, w: 105, h: 40,  color: '#82c55a' },
+      { x: 275, y: 150, w: 105, h: 40,  color: '#82c55a' },
+      { x: 125, y: 150, w: 150, h: 40,  color: '#c86dd9' },
+    ],
+    assignments: {
+      SS:   'Deep left half',
+      FS:   'Deep right half',
+      LCB:  'Flat left — jam WR1 then drop',
+      RCB:  'Flat right — jam WR2 then drop',
+      MLB:  'Hook-curl middle',
+      WILL: 'Hook-curl left',
+      SAM:  'Hook-curl right',
+    },
+  },
+  'cover-3': {
+    name: 'Cover 3',
+    short: 'Three-Deep Zone',
+    description: 'Three defenders split the deep field into thirds — both CBs drop back and the FS takes the middle. LBs and SS cover the underneath flats and hook zones. Most common zone in the NFL.',
+    analogy: '2-3 zone in basketball — three players protect deep (the paint), two play up front (underneath).',
+    zones: [
+      { x: 20,  y: 10,  w: 120, h: 145, color: '#82c55a' },
+      { x: 140, y: 10,  w: 120, h: 145, color: '#5bc8af' },
+      { x: 260, y: 10,  w: 120, h: 145, color: '#82c55a' },
+      { x: 20,  y: 155, w: 155, h: 37,  color: '#5bc8af' },
+      { x: 175, y: 155, w: 110, h: 37,  color: '#c86dd9' },
+      { x: 285, y: 155, w: 95,  h: 37,  color: '#c86dd9' },
+    ],
+    assignments: {
+      LCB:  'Deep left third',
+      FS:   'Deep middle third',
+      RCB:  'Deep right third',
+      SS:   'Flat / hook left',
+      MLB:  'Hook-curl middle',
+      SAM:  'Flat right',
+      WILL: 'Hook-curl left',
+    },
+  },
+  'cover-4': {
+    name: 'Cover 4',
+    short: 'Quarters',
+    description: 'Four DBs each take a quarter of the deep field. Excellent against Four Verticals — every deep receiver has a dedicated deep defender. Vulnerable underneath and against the run.',
+    analogy: 'Four outfielders in baseball — maximum deep coverage, but you\'re conceding everything underneath.',
+    zones: [
+      { x: 20,  y: 10,  w: 90,  h: 145, color: '#82c55a' },
+      { x: 110, y: 10,  w: 90,  h: 145, color: '#5bc8af' },
+      { x: 200, y: 10,  w: 90,  h: 145, color: '#5bc8af' },
+      { x: 290, y: 10,  w: 90,  h: 145, color: '#82c55a' },
+      { x: 20,  y: 155, w: 360, h: 37,  color: '#c86dd9' },
+    ],
+    assignments: {
+      LCB:  'Deep left quarter',
+      SS:   'Deep left-center quarter',
+      FS:   'Deep right-center quarter',
+      RCB:  'Deep right quarter',
+      MLB:  'Underneath middle',
+      WILL: 'Underneath left',
+      SAM:  'Underneath right',
+    },
+  },
+  'tampa-2': {
+    name: 'Tampa 2',
+    short: 'Cover 2 + MLB Seam',
+    description: 'A Cover 2 variant where the MLB drops deep into the middle seam — patching Cover 2\'s biggest weakness. Safeties still split the deep field, CBs play flats. Requires an elite, athletic MLB with serious range.',
+    analogy: 'Plugging the one leak in an otherwise airtight defense. The MLB has to be special to make it work.',
+    zones: [
+      { x: 20,  y: 10,  w: 180, h: 140, color: '#5bc8af' },
+      { x: 200, y: 10,  w: 180, h: 140, color: '#5bc8af' },
+      { x: 130, y: 55,  w: 140, h: 95,  color: '#c86dd9' },
+      { x: 20,  y: 150, w: 105, h: 40,  color: '#82c55a' },
+      { x: 275, y: 150, w: 105, h: 40,  color: '#82c55a' },
+    ],
+    assignments: {
+      SS:   'Deep left half',
+      FS:   'Deep right half',
+      MLB:  'Deep middle seam — the whole point of Tampa 2',
+      LCB:  'Flat left — jam then drop',
+      RCB:  'Flat right — jam then drop',
+      WILL: 'Hook-curl left',
+      SAM:  'Hook-curl right',
+    },
+  },
+};
+
 // ─── SCENARIO DATA ─────────────────────────────────────────────────
 const SCENARIOS = {
   '1st-10': {
@@ -1290,7 +1466,7 @@ function Tags({ tags }) {
 }
 
 // ─── FIELD SVG ─────────────────────────────────────────────────────
-function FieldSVG({ players, onSelect, selected, view, routeLines, arrowLines }) {
+function FieldSVG({ players, onSelect, selected, view, routeLines, arrowLines, coverageZones }) {
   return (
     <svg
       className="field-svg"
@@ -1331,6 +1507,17 @@ function FieldSVG({ players, onSelect, selected, view, routeLines, arrowLines })
           <line x1="155" y1={y - 5} x2="155" y2={y + 5} stroke="#4a8a4a" strokeWidth="1" />
           <line x1="245" y1={y - 5} x2="245" y2={y + 5} stroke="#4a8a4a" strokeWidth="1" />
         </g>
+      ))}
+
+      {/* Coverage zone overlays */}
+      {coverageZones && coverageZones.map((z, i) => (
+        <rect
+          key={`zone-${i}`}
+          x={z.x} y={z.y} width={z.w} height={z.h}
+          fill={z.color}
+          opacity={0.18}
+          rx={4}
+        />
       ))}
 
       {/* Matchup arrows */}
@@ -1416,6 +1603,7 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasRun, setHasRun] = useState(false);
   const [showMatchups, setShowMatchups] = useState(false);
+  const [selectedCoverage, setSelectedCoverage] = useState('');
   const [selectedScenario, setSelectedScenario] = useState('');
 
   const scenario = selectedScenario ? SCENARIOS[selectedScenario] : null;
@@ -1518,6 +1706,8 @@ function App() {
         return { offId, defId, label, from: offPos, to: defPos };
       }).filter(Boolean)
     : null;
+
+  const coverageZones = selectedCoverage ? COVERAGES[selectedCoverage].zones : null;
 
   const handleSelect = useCallback((id) => {
     if (isPlaying) return;
@@ -1638,6 +1828,28 @@ function App() {
           </select>
         </div>
 
+        {/* Coverage selector */}
+        {!selectedPlay && (
+          <div className="control-group">
+            <span className="control-label">Coverage</span>
+            <select value={selectedCoverage} onChange={e => { setSelectedCoverage(e.target.value); setView('defense'); }}>
+              <option value="">— Coverage scheme —</option>
+              <optgroup label="── Man ──">
+                <option value="cover-0">Cover 0 (Blitz Man)</option>
+                <option value="cover-1">Cover 1 (Man Free)</option>
+              </optgroup>
+              <optgroup label="── Zone ──">
+                <option value="cover-2">Cover 2 (Two-Deep)</option>
+                <option value="cover-3">Cover 3 (Three-Deep)</option>
+                <option value="cover-4">Cover 4 (Quarters)</option>
+              </optgroup>
+              <optgroup label="── Hybrid ──">
+                <option value="tampa-2">Tampa 2</option>
+              </optgroup>
+            </select>
+          </div>
+        )}
+
         {/* Matchup arrows toggle */}
         {!selectedPlay && (
           <div className="control-group">
@@ -1675,6 +1887,7 @@ function App() {
           view={view}
           routeLines={routeLines}
           arrowLines={arrowLines}
+          coverageZones={coverageZones}
         />
       </div>
 
@@ -1730,6 +1943,29 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Coverage info panel */}
+      {selectedCoverage && (() => {
+        const cov = COVERAGES[selectedCoverage];
+        return (
+          <div className="coverage-panel">
+            <div className="info-header">
+              <span className="info-name">{cov.name}</span>
+              <span className="coverage-short">{cov.short}</span>
+            </div>
+            <p className="info-role" style={{ marginTop: '6px' }}>{cov.description}</p>
+            <p className="info-analogy" style={{ marginTop: '8px' }}>{cov.analogy}</p>
+            <div className="assignments-grid">
+              {Object.entries(cov.assignments).map(([pos, desc]) => (
+                <div key={pos} className="assignment-row">
+                  <span className="assignment-pos">{pos}</span>
+                  <span className="assignment-desc">{desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Formation info panel */}
       <div className="info-panel" style={{ marginTop: 0 }}>
