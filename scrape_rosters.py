@@ -1,8 +1,16 @@
 """
 scrape_rosters.py
 -----------------
-Fetches NFL rosters from the ESPN unofficial API for all 32 teams
+Fetches NFL depth chart starters from the ESPN API for all 32 teams
 and outputs rosters.json — a file you paste into index.html.
+
+Uses two ESPN endpoints per team:
+  1. Roster endpoint  → builds an athlete ID → full name lookup
+  2. Depth chart endpoint → ranked starters (rank 1 = starter) per position
+
+This two-step approach is necessary because the roster endpoint returns
+players in alphabetical order, while the depth chart endpoint returns
+them in true depth-chart order (starter first).
 
 Usage:
     python3 scrape_rosters.py              # scrape all 32 teams
@@ -17,9 +25,9 @@ HOW TO UPDATE ROSTERS FOR A NEW SEASON (e.g. 2026-2027)
 
 STEP 1 — Wait for rosters to stabilize
     Run this after final cuts (typically the Tuesday after the last
-    preseason game, around late August). ESPN's API reflects the
-    active 53-man roster, so running it too early will pull preseason
-    rosters that don't reflect final depth charts.
+    preseason game, around late August). ESPN's depth chart reflects
+    the active 53-man roster, so running it too early may return
+    preseason depth charts that don't reflect final decisions.
 
 STEP 2 — Run the script
     python3 scrape_rosters.py
@@ -49,45 +57,61 @@ HOW THIS SCRIPT WORKS (for Claude context)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 1. Calls ESPN's teams list endpoint to discover all 32 team IDs
-   dynamically — no hardcoded IDs, so it works across seasons even
-   if ESPN renumbers teams.
+   dynamically — no hardcoded IDs, so it works across seasons.
 
-2. For each team, fetches:
-   https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{id}/roster
-   No API key required. ESPN makes this endpoint public.
+2. For each team, fetches TWO endpoints:
+   a. Roster:
+      https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{id}/roster
+      Used only to build an athlete_id → fullName lookup dict.
+      (The roster endpoint returns players alphabetically, not by
+      depth chart order — this is why we need the second endpoint.)
 
-3. The response groups players by "offense", "defense", etc.
-   Each player has fullName and position.abbreviation.
+   b. Depth chart:
+      https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/{year}/teams/{id}/depthcharts
+      Returns formations (e.g. "3WR 1TE", "Base 4-3 D") each with
+      positions and ranked athletes. rank=1 is the starter.
+      Athlete references are IDs only ($ref URLs), so we resolve
+      names using the lookup built in step (a).
 
-4. POSITION MAPPING (see OFFENSE_MAP / DEFENSE_MAP below):
-   ESPN doesn't distinguish left vs. right for tackles (OT) or
-   guards (G), so the script assigns LT/RT and LG/RG by order of
-   appearance on the roster. If ESPN changes position abbreviations
-   in a future season, add the new abbreviation to the relevant map.
+3. SEASON YEAR: The depth chart URL includes the season year (e.g. 2025).
+   Update SEASON below at the start of each new season.
 
-5. Outputs rosters.json keyed by team abbreviation (e.g. "SEA"),
-   with "offense" and "defense" sub-objects keyed by the app's
-   internal position IDs (QB, LT, LG, C, RG, RT, WR1-3, TE, RB, FB
-   for offense; DE1, DE2, DT1, DT2, MLB, WILL, SAM, LCB, RCB, FS,
-   SS for defense).
+4. FORMATION SELECTION:
+   - Offense: the formation whose positions include 'qb'
+   - Defense: the formation whose positions include 'mlb' or 'lilb'
+     (3-4 teams use 'lilb' for the left inside linebacker instead of 'mlb')
+
+5. POSITION MAPPING (see OFFENSE_DEPTH_MAP / DEFENSE_DEPTH_MAP below):
+   ESPN depth chart uses short position keys like 'lt', 'wr', 'lde'.
+   These map to the app's internal position IDs.
+   - 4-3 defense uses: lde, ldt, rdt, rde, mlb, wlb, slb
+   - 3-4 defense uses: lde, nt, rde, lilb, rilb, wlb, slb
+   Both are handled by the same map; first filled slot wins.
 
 TROUBLESHOOTING:
-   - "Only N offense positions found" warning → ESPN may have changed
-     position abbreviations. Print the raw ESPN positions for that
-     team and update OFFENSE_MAP / DEFENSE_MAP accordingly.
+   - Wrong starters → ESPN may have a different formation name. Print
+     [item['name'] for item in depth_chart['items']] for that team and
+     check which formation contains the expected position keys.
+   - Empty positions → ESPN may have renamed a position key. Print
+     item['positions'].keys() for the relevant formation and update
+     OFFENSE_DEPTH_MAP / DEFENSE_DEPTH_MAP.
    - HTTP 429 / rate limit → increase DELAY (currently 1 second).
-   - A team returns an empty roster → ESPN may have changed the
-     response structure. Print raw data for that team_id and update
-     the fetch_json / scrape_team parsing logic.
+   - "Season not found" errors → update SEASON to the current year.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 
 import sys
+import re
 import json
 import time
 import requests
 
-DELAY = 1  # seconds between requests
+# ─── CONFIG ───────────────────────────────────────────────────────────────────
+# Update SEASON at the start of each new NFL season year.
+# 2025 = the 2025-2026 season. Change to 2026 for the 2026-2027 season, etc.
+SEASON = 2025
+
+DELAY = 1  # seconds between teams — be polite to ESPN
 
 HEADERS = {
     "User-Agent": (
@@ -97,42 +121,47 @@ HEADERS = {
     )
 }
 
-TEAMS_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams?limit=32"
-ROSTER_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team_id}/roster"
+TEAMS_URL    = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams?limit=32"
+ROSTER_URL   = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team_id}/roster"
+DEPTHCHART_URL = "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/{season}/teams/{team_id}/depthcharts"
+
 
 # ─── POSITION MAPPING ─────────────────────────────────────────────────────────
-# Maps ESPN position abbreviations → app position IDs (in priority order).
-# The first unfilled slot in the list gets the next player of that ESPN position.
+# Maps ESPN depth chart position keys → app position IDs.
+# For positions with multiple slots (WR → WR1/WR2/WR3), athletes are assigned
+# in rank order (rank 1 → first slot, rank 2 → second slot, etc.).
+# First filled slot wins — so 4-3 and 3-4 keys coexist safely.
 
-OFFENSE_MAP = {
-    "QB":  ["QB"],
-    "C":   ["C"],
-    "OT":  ["LT", "RT"],     # ESPN doesn't distinguish L/R — assign by order
-    "OG":  ["LG", "RG"],     # offensive guard
-    "G":   ["LG", "RG"],
-    "T":   ["LT", "RT"],
-    "WR":  ["WR1", "WR2", "WR3"],
-    "TE":  ["TE"],
-    "RB":  ["RB"],
-    "FB":  ["FB"],
-    "HB":  ["RB"],
-    "OL":  ["LT", "LG", "C", "RG", "RT"],  # generic OL
+OFFENSE_DEPTH_MAP = {
+    # Key: ESPN depth chart position key → list of app IDs to fill in order
+    "qb":  ["QB"],
+    "lt":  ["LT"],
+    "lg":  ["LG"],
+    "c":   ["C"],
+    "rg":  ["RG"],
+    "rt":  ["RT"],
+    "wr":  ["WR1", "WR2", "WR3"],  # up to 3 WRs by rank
+    "te":  ["TE"],
+    "rb":  ["RB"],
+    "fb":  ["FB"],
 }
 
-DEFENSE_MAP = {
-    "DE":  ["DE1", "DE2"],
-    "DT":  ["DT1", "DT2"],
-    "NT":  ["DT1", "DT2"],
-    "DL":  ["DE1", "DT1", "DT2", "DE2"],
-    "MLB": ["MLB"],
-    "ILB": ["MLB", "WILL"],
-    "OLB": ["SAM", "WILL"],
-    "LB":  ["MLB", "WILL", "SAM"],
-    "CB":  ["LCB", "RCB"],
-    "FS":  ["FS"],
-    "SS":  ["SS"],
-    "S":   ["SS", "FS"],
-    "DB":  ["LCB", "RCB"],
+DEFENSE_DEPTH_MAP = {
+    # 4-3 and 3-4 keys handled together
+    "lde":  ["DE1"],
+    "rde":  ["DE2"],
+    "ldt":  ["DT1"],          # 4-3 left DT
+    "rdt":  ["DT2"],          # 4-3 right DT
+    "nt":   ["DT1"],          # 3-4 nose tackle → DT1 slot
+    "mlb":  ["MLB"],          # 4-3 middle LB
+    "lilb": ["MLB"],          # 3-4 left inside LB → MLB slot
+    "rilb": ["WILL"],         # 3-4 right inside LB → WILL slot
+    "wlb":  ["WILL"],         # 4-3 weak-side OLB → WILL slot
+    "slb":  ["SAM"],          # strong-side OLB
+    "lcb":  ["LCB"],
+    "rcb":  ["RCB"],
+    "ss":   ["SS"],
+    "fs":   ["FS"],
 }
 
 
@@ -144,12 +173,18 @@ def fetch_json(url):
     return resp.json()
 
 
+def athlete_id_from_ref(ref_url):
+    """Extract numeric athlete ID from an ESPN $ref URL."""
+    m = re.search(r"/athletes/(\d+)", ref_url)
+    return m.group(1) if m else None
+
+
 def get_all_teams():
     """Return list of { id, abbr, name } for all 32 NFL teams."""
     data = fetch_json(TEAMS_URL)
     teams = []
-    for item in data.get("sports", [{}])[0].get("leagues", [{}])[0].get("teams", []):
-        t = item.get("team", {})
+    for item in data["sports"][0]["leagues"][0]["teams"]:
+        t = item["team"]
         teams.append({
             "id":   t["id"],
             "abbr": t["abbreviation"].upper(),
@@ -158,48 +193,73 @@ def get_all_teams():
     return teams
 
 
-def map_positions(items, position_map):
+def build_id_name_map(team_id):
+    """Fetch the roster and return { athlete_id_str: fullName }."""
+    data = fetch_json(ROSTER_URL.format(team_id=team_id))
+    return {
+        str(player["id"]): player["fullName"]
+        for group in data.get("athletes", [])
+        for player in group.get("items", [])
+    }
+
+
+def extract_positions(formation, id_to_name, position_map):
     """
-    Given a list of ESPN player items and a position map,
-    return { app_id: "Player Name" } for starters.
-    Each app slot is filled at most once (first player wins).
+    Given a depth chart formation dict, extract starters mapped to app IDs.
+    Returns { app_position_id: "Player Full Name" }.
     """
     result = {}
-    used = set()
+    filled = set()
 
-    for player in items:
-        espn_pos = player.get("position", {}).get("abbreviation", "").upper()
-        if espn_pos not in position_map:
-            continue
-        for app_id in position_map[espn_pos]:
-            if app_id not in used:
-                result[app_id] = player.get("fullName", "")
-                used.add(app_id)
-                break  # only consume one slot per player
+    for depth_key, app_ids in position_map.items():
+        pos_data = formation["positions"].get(depth_key, {})
+        athletes = sorted(pos_data.get("athletes", []), key=lambda a: a["rank"])
+        slot_index = 0
+        for athlete_entry in athletes:
+            if slot_index >= len(app_ids):
+                break
+            app_id = app_ids[slot_index]
+            if app_id in filled:
+                slot_index += 1
+                continue
+            ref = athlete_entry["athlete"].get("$ref", "")
+            athlete_id = athlete_id_from_ref(ref)
+            if athlete_id and athlete_id in id_to_name:
+                result[app_id] = id_to_name[athlete_id]
+                filled.add(app_id)
+            slot_index += 1
 
     return result
 
 
 def scrape_team(team_id):
-    """Fetch ESPN roster for team_id, return { offense: {...}, defense: {...} }."""
-    data = fetch_json(ROSTER_URL.format(team_id=team_id))
+    """Return { offense: {...}, defense: {...} } for one team."""
+    # Step 1: build athlete ID → name lookup from roster endpoint
+    id_to_name = build_id_name_map(team_id)
 
-    offense_players = []
-    defense_players = []
+    # Step 2: fetch depth chart
+    dc_data = fetch_json(DEPTHCHART_URL.format(season=SEASON, team_id=team_id))
+    formations = dc_data.get("items", [])
 
-    for group in data.get("athletes", []):
-        group_pos = group.get("position", "").lower()
-        items = group.get("items", [])
-        if group_pos == "offense":
-            offense_players.extend(items)
-        elif group_pos == "defense":
-            defense_players.extend(items)
+    # Step 3: find the base offense formation (has 'qb' position)
+    off_formation = next(
+        (f for f in formations if "qb" in f.get("positions", {})),
+        None
+    )
 
-    offense = map_positions(offense_players, OFFENSE_MAP)
-    defense = map_positions(defense_players, DEFENSE_MAP)
+    # Step 4: find the base defense formation (has 'mlb' or 'lilb' position)
+    def_formation = next(
+        (f for f in formations if "mlb" in f.get("positions", {}) or "lilb" in f.get("positions", {})),
+        None
+    )
 
-    if len(offense) < 3:
-        print(f"    ⚠️  Only {len(offense)} offense positions found — ESPN structure may have changed")
+    offense = extract_positions(off_formation, id_to_name, OFFENSE_DEPTH_MAP) if off_formation else {}
+    defense = extract_positions(def_formation, id_to_name, DEFENSE_DEPTH_MAP) if def_formation else {}
+
+    if len(offense) < 5:
+        print(f"    ⚠️  Only {len(offense)} offense positions — check formation names: {[f['name'] for f in formations]}")
+    if len(defense) < 5:
+        print(f"    ⚠️  Only {len(defense)} defense positions — check formation names: {[f['name'] for f in formations]}")
 
     return {"offense": offense, "defense": defense}
 
@@ -211,7 +271,6 @@ def main():
     all_teams = get_all_teams()
     team_by_abbr = {t["abbr"]: t for t in all_teams}
 
-    # Optional: filter to specific teams via CLI args (e.g. SEA DAL SF)
     if len(sys.argv) > 1:
         requested = [a.upper() for a in sys.argv[1:]]
         invalid = [a for a in requested if a not in team_by_abbr]
@@ -223,7 +282,7 @@ def main():
     else:
         target_teams = sorted(all_teams, key=lambda t: t["name"])
 
-    print(f"Scraping {len(target_teams)} team(s)...\n")
+    print(f"Scraping {len(target_teams)} team(s) — using {SEASON} depth charts...\n")
 
     rosters = {}
 
