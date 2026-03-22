@@ -71,6 +71,26 @@
     button:hover { background: #3a3a5a; color: #fff; }
     button.active { background: #3d7ebf; color: #fff; border-color: #5b9fd4; }
 
+    select {
+      background: #2a2a4a;
+      color: #ccc;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 5px 28px 5px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 9px center;
+      transition: all 0.15s;
+      min-width: 130px;
+    }
+
+    select:hover, select:focus { background-color: #3a3a5a; color: #fff; outline: none; border-color: #5b9fd4; }
+
+    optgroup { color: #888; font-size: 0.7rem; }
+
     /* Field wrapper */
     .field-wrap {
       position: relative;
@@ -411,6 +431,47 @@ const POSITIONS = {
     role: 'Plays closer to the line. Stops the run, covers the tight end, and can blitz. Hybrid of LB and DB.',
     analogy: 'The enforcer of the secondary — tough enough to tackle in the box, fast enough to cover.',
   },
+  // Extra positions for new formations
+  TE2: {
+    name: 'Tight End (2nd)',
+    abbr: 'TE',
+    side: 'offense',
+    color: COLORS.TE,
+    role: 'Second tight end on the field. Adds an extra blocker at the point of attack while still being a receiving threat. Forces defenses to account for two hybrid weapons.',
+    analogy: 'Like having two power forwards — doubles the mismatch problem for the defense.',
+  },
+  WC: {
+    name: 'Wildcat Quarterback',
+    abbr: 'WC',
+    side: 'offense',
+    color: COLORS.RB,
+    role: 'A running back or receiver who takes the snap directly — no QB involved. Completely removes the defense\'s read keys. Pure surprise and athleticism.',
+    analogy: 'Like a point guard who also plays center — the defense doesn\'t know what scheme to run.',
+  },
+  NB: {
+    name: 'Nickel Back',
+    abbr: 'NB',
+    side: 'defense',
+    color: COLORS.DB,
+    role: 'The 5th defensive back, usually a slot corner. Comes on in place of a linebacker to match up against a 3rd wide receiver or quick slot routes.',
+    analogy: 'The specialist sub — like bringing in a lockdown perimeter defender mid-game to handle a specific threat.',
+  },
+  DB3: {
+    name: 'Dime Back',
+    abbr: 'DB',
+    side: 'defense',
+    color: COLORS.DB,
+    role: 'The 6th defensive back. Used in obvious passing situations. Trades run-stopping ability for an extra coverage player in the secondary.',
+    analogy: 'Going all-in on pass defense — like pulling your center to add a third point guard when you need stops.',
+  },
+  DB4: {
+    name: 'Quarter Back (DB)',
+    abbr: 'DB',
+    side: 'defense',
+    color: COLORS.DB,
+    role: 'One of four extra DBs in a Quarter package. Seven defensive backs total — extreme pass prevention used on last-second Hail Mary situations.',
+    analogy: 'The nuclear option for pass defense — flood the field with coverage specialists.',
+  },
 };
 
 // ─── FORMATIONS ────────────────────────────────────────────────────
@@ -438,6 +499,26 @@ const OFF_FORMATION_INFO = {
     role: 'No RB in the backfield — everyone spreads out as a receiver. Forces the defense to cover the whole field. Almost always a passing play.',
     analogy: 'Going all-in — you\'re telling the defense "we\'re passing" and daring them to stop it.',
   },
+  Pistol: {
+    name: 'Pistol',
+    role: 'The QB takes a short 4-yard snap (deeper than under center, shallower than shotgun) with the RB lined up directly behind him. Gets the QB\'s eyes downfield quickly while keeping the run game intact.',
+    analogy: 'Best of both worlds — the QB can see the field like in shotgun but still hand off like in I-Form.',
+  },
+  Trips: {
+    name: 'Trips',
+    role: 'Three wide receivers aligned to one side of the field. Forces the defense to overload that side, leaving the backside WR or TE in single coverage. Great for spacing and route combos.',
+    analogy: 'Overloading one side of the court — like stacking three shooters in a corner to force a defensive rotation.',
+  },
+  Wildcat: {
+    name: 'Wildcat',
+    role: 'A running back or receiver takes the direct snap — no QB. Often paired with a jet sweep or double-reverse. A pure trick play that removes the defense\'s normal read keys.',
+    analogy: 'The unexpected chess move — a surprise shift in strategy that forces the opponent to react instantly.',
+  },
+  '2-TE': {
+    name: '2 Tight End',
+    role: 'Two tight ends on the field, one on each side of the line. A power formation that creates mismatches — defenses either give up a coverage edge or a run-blocking edge.',
+    analogy: 'Like playing with two power forwards — physical dominance at the point of attack on both sides.',
+  },
 };
 
 const DEF_FORMATION_INFO = {
@@ -460,6 +541,21 @@ const DEF_FORMATION_INFO = {
     name: 'Dime Defense',
     role: '6 defensive backs on the field — two extra DBs replacing linebackers. Used in obvious passing situations (3rd and long). Prioritizes coverage over run defense.',
     analogy: 'Going full prevent defense — flood the secondary and take away every passing lane.',
+  },
+  '4-2-5': {
+    name: '4-2-5 Defense',
+    role: '4 defensive linemen, 2 linebackers, and 5 defensive backs. The modern base defense for many NFL teams — evolved to handle spread offenses. More athleticism in coverage without sacrificing the pass rush.',
+    analogy: 'The modern update to the 4-3 — like switching from a traditional zone to a switching defense in basketball.',
+  },
+  '46': {
+    name: '46 Defense (Bear)',
+    role: 'Named after safety Doug Plank (#46) by Buddy Ryan. 8 defenders crowd the line of scrimmage — extreme pressure on every snap. Leaves man coverage behind with no safety help. High risk, high reward.',
+    analogy: 'Full-court press in basketball — overwhelming the offense at the point of attack, but leave the back door open.',
+  },
+  Quarter: {
+    name: 'Quarter Package',
+    role: '7 defensive backs on the field — only 4 on the line and 0 linebackers. Used exclusively in Hail Mary and last-second desperation scenarios. Everyone is in deep coverage.',
+    analogy: 'Dropping everyone into the deep end of the pool — sacrifice everything to prevent the big play.',
   },
 };
 
@@ -516,6 +612,58 @@ const OFF_FORMATIONS = {
     TE:  { x: 70, y: 55 },
     RB:  { x: 78, y: 58 },
   },
+  Pistol: {
+    QB:  { x: 50, y: 63 },
+    LT:  { x: 37, y: 55 },
+    LG:  { x: 43, y: 55 },
+    C:   { x: 50, y: 55 },
+    RG:  { x: 57, y: 55 },
+    RT:  { x: 63, y: 55 },
+    TE:  { x: 70, y: 55 },
+    WR1: { x: 12, y: 55 },
+    WR2: { x: 88, y: 55 },
+    WR3: { x: 80, y: 58 },
+    RB:  { x: 50, y: 71 },
+  },
+  Trips: {
+    QB:  { x: 50, y: 67 },
+    LT:  { x: 37, y: 55 },
+    LG:  { x: 43, y: 55 },
+    C:   { x: 50, y: 55 },
+    RG:  { x: 57, y: 55 },
+    RT:  { x: 63, y: 55 },
+    TE:  { x: 70, y: 55 },
+    WR1: { x: 12, y: 55 },
+    WR2: { x: 82, y: 55 },
+    WR3: { x: 90, y: 55 },
+    RB:  { x: 41, y: 67 },
+  },
+  Wildcat: {
+    WC:  { x: 50, y: 58 },
+    LT:  { x: 37, y: 55 },
+    LG:  { x: 43, y: 55 },
+    C:   { x: 50, y: 55 },
+    RG:  { x: 57, y: 55 },
+    RT:  { x: 63, y: 55 },
+    TE:  { x: 70, y: 55 },
+    WR1: { x: 12, y: 55 },
+    WR2: { x: 88, y: 55 },
+    WR3: { x: 22, y: 55 },
+    RB:  { x: 38, y: 63 },
+  },
+  '2-TE': {
+    QB:  { x: 50, y: 58 },
+    LT:  { x: 37, y: 55 },
+    LG:  { x: 43, y: 55 },
+    C:   { x: 50, y: 55 },
+    RG:  { x: 57, y: 55 },
+    RT:  { x: 63, y: 55 },
+    TE:  { x: 70, y: 55 },
+    TE2: { x: 30, y: 55 },
+    WR1: { x: 12, y: 55 },
+    WR2: { x: 88, y: 55 },
+    RB:  { x: 50, y: 67 },
+  },
 };
 
 const DEF_FORMATIONS = {
@@ -570,6 +718,45 @@ const DEF_FORMATIONS = {
     FS:   { x: 50, y: 15 },
     SAM:  { x: 72, y: 22 },
     MLB:  { x: 70, y: 25 },
+  },
+  '4-2-5': {
+    DE1:  { x: 33, y: 40 },
+    DT1:  { x: 43, y: 40 },
+    DT2:  { x: 57, y: 40 },
+    DE2:  { x: 67, y: 40 },
+    WILL: { x: 43, y: 32 },
+    MLB:  { x: 57, y: 32 },
+    LCB:  { x: 12, y: 22 },
+    RCB:  { x: 88, y: 22 },
+    NB:   { x: 30, y: 28 },
+    FS:   { x: 50, y: 15 },
+    SS:   { x: 70, y: 22 },
+  },
+  '46': {
+    DE1:  { x: 30, y: 42 },
+    DT1:  { x: 40, y: 40 },
+    DT2:  { x: 50, y: 40 },
+    DE2:  { x: 60, y: 40 },
+    WILL: { x: 35, y: 34 },
+    MLB:  { x: 50, y: 34 },
+    SAM:  { x: 65, y: 34 },
+    SS:   { x: 70, y: 40 },
+    LCB:  { x: 12, y: 25 },
+    RCB:  { x: 88, y: 25 },
+    FS:   { x: 50, y: 18 },
+  },
+  Quarter: {
+    DE1:  { x: 33, y: 40 },
+    DT1:  { x: 43, y: 40 },
+    DT2:  { x: 57, y: 40 },
+    DE2:  { x: 67, y: 40 },
+    LCB:  { x: 12, y: 22 },
+    RCB:  { x: 88, y: 22 },
+    NB:   { x: 25, y: 28 },
+    DB3:  { x: 75, y: 28 },
+    SS:   { x: 35, y: 18 },
+    FS:   { x: 50, y: 13 },
+    DB4:  { x: 65, y: 18 },
   },
 };
 
@@ -709,25 +896,42 @@ function App() {
         {/* Offense formation */}
         <div className="control-group">
           <span className="control-label">Offense</span>
-          <div className="btn-row">
-            {Object.keys(OFF_FORMATIONS).map(f => (
-              <button key={f} className={offForm === f ? 'active' : ''} onClick={() => { setOffForm(f); setSelected(null); }}>
-                {f}
-              </button>
-            ))}
-          </div>
+          <select value={offForm} onChange={e => { setOffForm(e.target.value); setSelected(null); }}>
+            <optgroup label="── Base ──">
+              <option value="Shotgun">Shotgun</option>
+              <option value="I-Form">I-Formation</option>
+              <option value="Singleback">Singleback</option>
+              <option value="Pistol">Pistol</option>
+            </optgroup>
+            <optgroup label="── Spread ──">
+              <option value="Empty">Empty Backfield</option>
+              <option value="Trips">Trips</option>
+            </optgroup>
+            <optgroup label="── Specialty ──">
+              <option value="2-TE">2 Tight Ends</option>
+              <option value="Wildcat">Wildcat</option>
+            </optgroup>
+          </select>
         </div>
 
         {/* Defense formation */}
         <div className="control-group">
           <span className="control-label">Defense</span>
-          <div className="btn-row">
-            {Object.keys(DEF_FORMATIONS).map(f => (
-              <button key={f} className={defForm === f ? 'active' : ''} onClick={() => { setDefForm(f); setSelected(null); }}>
-                {f}
-              </button>
-            ))}
-          </div>
+          <select value={defForm} onChange={e => { setDefForm(e.target.value); setSelected(null); }}>
+            <optgroup label="── Base ──">
+              <option value="4-3">4-3</option>
+              <option value="3-4">3-4</option>
+              <option value="4-2-5">4-2-5</option>
+            </optgroup>
+            <optgroup label="── Nickel / Dime ──">
+              <option value="Nickel">Nickel</option>
+              <option value="Dime">Dime</option>
+            </optgroup>
+            <optgroup label="── Specialty ──">
+              <option value="46">46 (Bear)</option>
+              <option value="Quarter">Quarter</option>
+            </optgroup>
+          </select>
         </div>
       </div>
 
