@@ -211,6 +211,27 @@
       color: #aaa;
     }
 
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .tag-run    { background: #3a2a10; color: #f5a623; border: 1px solid #6a4a20; }
+    .tag-pass   { background: #1a2a4a; color: #69d2e7; border: 1px solid #2a4a7a; }
+    .tag-balanced { background: #1a3a1a; color: #82c55a; border: 1px solid #2a5a2a; }
+    .tag-default { background: #2a2a3a; color: #aaa;    border: 1px solid #3a3a5a; }
+
     .legend-item {
       display: flex;
       align-items: center;
@@ -484,41 +505,49 @@ const POSITIONS = {
 const OFF_FORMATION_INFO = {
   Shotgun: {
     name: 'Shotgun',
+    tags: ['Pass-heavy', 'Common'],
     role: 'The QB lines up 5–7 yards behind the center instead of directly under him. Gives the QB more time to read the defense before the snap — ideal for passing situations.',
     analogy: 'Like a pitcher who takes a longer wind-up to survey the whole field before throwing.',
   },
   'I-Form': {
     name: 'I-Formation',
+    tags: ['Run-heavy', 'Power'],
     role: 'The QB is under center with the FB and RB lined up directly behind him in a vertical line ("I" shape). A power run formation — the FB leads the RB through the hole.',
     analogy: 'A battering ram setup — the FB clears the path, the RB follows right behind.',
   },
   Singleback: {
     name: 'Singleback',
+    tags: ['Balanced', 'Common'],
     role: 'The QB is under center with a single RB lined up directly behind him. Balanced between run and pass — versatile with two wide receivers spread wide.',
     analogy: 'The Swiss Army knife formation — ready to run or pass without tipping your hand.',
   },
   Empty: {
     name: 'Empty Backfield',
+    tags: ['Pass-heavy', 'Spread'],
     role: 'No RB in the backfield — everyone spreads out as a receiver. Forces the defense to cover the whole field. Almost always a passing play.',
     analogy: 'Going all-in — you\'re telling the defense "we\'re passing" and daring them to stop it.',
   },
   Pistol: {
     name: 'Pistol',
+    tags: ['Balanced', 'Modern'],
     role: 'The QB takes a short 4-yard snap (deeper than under center, shallower than shotgun) with the RB lined up directly behind him. Gets the QB\'s eyes downfield quickly while keeping the run game intact.',
     analogy: 'Best of both worlds — the QB can see the field like in shotgun but still hand off like in I-Form.',
   },
   Trips: {
     name: 'Trips',
+    tags: ['Pass-heavy', 'Spread'],
     role: 'Three wide receivers aligned to one side of the field. Forces the defense to overload that side, leaving the backside WR or TE in single coverage. Great for spacing and route combos.',
     analogy: 'Overloading one side of the court — like stacking three shooters in a corner to force a defensive rotation.',
   },
   Wildcat: {
     name: 'Wildcat',
+    tags: ['Run-heavy', 'Trick play'],
     role: 'A running back or receiver takes the direct snap — no QB. Often paired with a jet sweep or double-reverse. A pure trick play that removes the defense\'s normal read keys.',
     analogy: 'The unexpected chess move — a surprise shift in strategy that forces the opponent to react instantly.',
   },
   '2-TE': {
     name: '2 Tight End',
+    tags: ['Run-heavy', 'Power'],
     role: 'Two tight ends on the field, one on each side of the line. A power formation that creates mismatches — defenses either give up a coverage edge or a run-blocking edge.',
     analogy: 'Like playing with two power forwards — physical dominance at the point of attack on both sides.',
   },
@@ -527,36 +556,43 @@ const OFF_FORMATION_INFO = {
 const DEF_FORMATION_INFO = {
   '4-3': {
     name: '4-3 Defense',
+    tags: ['Balanced', 'Base'],
     role: '4 defensive linemen and 3 linebackers. The standard base defense — balanced against both the run and the pass. The 4-man line creates pressure without blitzing.',
     analogy: 'The classic setup — like a zone defense in basketball that covers all the basics.',
   },
   '3-4': {
     name: '3-4 Defense',
+    tags: ['Balanced', 'Blitz-friendly'],
     role: '3 defensive linemen and 4 linebackers. The linemen occupy blockers so the LBs stay free to roam and make plays. Creates unpredictable blitz packages.',
     analogy: 'More linebackers means more versatility — like having extra midfielders who can attack or defend.',
   },
   Nickel: {
     name: 'Nickel Defense',
+    tags: ['Pass coverage', 'vs. 3-WR'],
     role: 'Replaces a linebacker with a 5th defensive back (the "nickel back"). Used against 3-WR sets — trades run-stopping for pass coverage.',
     analogy: 'Switching to a zone press in basketball when the other team goes small and fast.',
   },
   Dime: {
     name: 'Dime Defense',
+    tags: ['Pass coverage', '3rd & long'],
     role: '6 defensive backs on the field — two extra DBs replacing linebackers. Used in obvious passing situations (3rd and long). Prioritizes coverage over run defense.',
     analogy: 'Going full prevent defense — flood the secondary and take away every passing lane.',
   },
   '4-2-5': {
     name: '4-2-5 Defense',
+    tags: ['Balanced', 'Modern'],
     role: '4 defensive linemen, 2 linebackers, and 5 defensive backs. The modern base defense for many NFL teams — evolved to handle spread offenses. More athleticism in coverage without sacrificing the pass rush.',
     analogy: 'The modern update to the 4-3 — like switching from a traditional zone to a switching defense in basketball.',
   },
   '46': {
     name: '46 Defense (Bear)',
+    tags: ['Run-stuffing', 'High risk'],
     role: 'Named after safety Doug Plank (#46) by Buddy Ryan. 8 defenders crowd the line of scrimmage — extreme pressure on every snap. Leaves man coverage behind with no safety help. High risk, high reward.',
     analogy: 'Full-court press in basketball — overwhelming the offense at the point of attack, but leave the back door open.',
   },
   Quarter: {
     name: 'Quarter Package',
+    tags: ['Pass coverage', 'Desperation'],
     role: '7 defensive backs on the field — only 4 on the line and 0 linebackers. Used exclusively in Hail Mary and last-second desperation scenarios. Everyone is in deep coverage.',
     analogy: 'Dropping everyone into the deep end of the pool — sacrifice everything to prevent the big play.',
   },
@@ -762,6 +798,23 @@ const DEF_FORMATIONS = {
     DB4:  { x: 65, y: 18 },
   },
 };
+
+// ─── TAG HELPER ────────────────────────────────────────────────────
+function tagClass(tag) {
+  const t = tag.toLowerCase();
+  if (t.includes('run')) return 'tag tag-run';
+  if (t.includes('pass') || t.includes('spread')) return 'tag tag-pass';
+  if (t.includes('balanced')) return 'tag tag-balanced';
+  return 'tag tag-default';
+}
+
+function Tags({ tags }) {
+  return (
+    <div className="tag-row">
+      {tags.map(tag => <span key={tag} className={tagClass(tag)}>{tag}</span>)}
+    </div>
+  );
+}
 
 // ─── FIELD SVG ─────────────────────────────────────────────────────
 function FieldSVG({ players, onSelect, selected, view }) {
@@ -973,6 +1026,7 @@ function App() {
               <span className="info-name">{OFF_FORMATION_INFO[offForm].name}</span>
               <span className="info-side offense">offense</span>
             </div>
+            <Tags tags={OFF_FORMATION_INFO[offForm].tags} />
             <p className="info-role">{OFF_FORMATION_INFO[offForm].role}</p>
             <p className="info-analogy">{OFF_FORMATION_INFO[offForm].analogy}</p>
           </div>
@@ -984,6 +1038,7 @@ function App() {
               <span className="info-name">{DEF_FORMATION_INFO[defForm].name}</span>
               <span className="info-side defense">defense</span>
             </div>
+            <Tags tags={DEF_FORMATION_INFO[defForm].tags} />
             <p className="info-role">{DEF_FORMATION_INFO[defForm].role}</p>
             <p className="info-analogy">{DEF_FORMATION_INFO[defForm].analogy}</p>
           </div>
