@@ -163,6 +163,53 @@
     .matchup-btn:hover { background: #3a1a5a; color: #fff; }
     .matchup-btn.active { background: #6a2a9a; color: #fff; border-color: #9a4ad9; }
 
+    /* Scenario panel */
+    .scenario-panel {
+      width: min(96vw, 560px);
+      background: #1e1a0e;
+      border: 1px solid #5a4a10;
+      border-radius: 12px;
+      margin: 0 auto 0;
+      padding: 16px 20px;
+      text-align: left;
+    }
+
+    .scenario-situation {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #f5c842;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .scenario-why {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .scenario-side {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .scenario-side-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .scenario-side-label.off { color: #82c55a; }
+    .scenario-side-label.def { color: #e07070; }
+
+    .scenario-why-text {
+      font-size: 0.83rem;
+      color: #ccc;
+      line-height: 1.5;
+    }
+
     .player-label {
       pointer-events: none;
       font-size: 8px;
@@ -1004,6 +1051,74 @@ const PLAYS = {
   },
 };
 
+// ─── SCENARIO DATA ─────────────────────────────────────────────────
+const SCENARIOS = {
+  '1st-10': {
+    name: '1st & 10',
+    situation: 'First down, 10 yards to go. The most common situation in football — everything is on the table.',
+    offForm: 'Singleback',
+    defForm: '4-3',
+    offWhy: 'Balanced formation — can hand off or pass without tipping your hand. The defense has to respect both.',
+    defWhy: 'Base 4-3 — no reason to show a special package on first down. Stay balanced and make the offense prove they can move the ball.',
+  },
+  '3rd-long': {
+    name: '3rd & Long',
+    situation: '3rd down, 8+ yards to go. Must pass to keep the drive alive. Everyone in the stadium knows it.',
+    offForm: 'Shotgun',
+    defForm: 'Nickel',
+    offWhy: 'Shotgun spreads the field and gives the QB time to find an open receiver. Three wide receivers create coverage problems.',
+    defWhy: 'Swap a linebacker for a 5th DB (the nickel back) to match the extra receiver. Run defense doesn\'t matter here — everyone knows it\'s a pass.',
+  },
+  '4th-short': {
+    name: '4th & Short',
+    situation: '4th down, 1-2 yards. Offense goes for it. The most intense single play in football.',
+    offForm: '2-TE',
+    defForm: '46',
+    offWhy: 'Two tight ends add blocking at the point of attack. Power run or QB sneak — get your nose down and push a yard.',
+    defWhy: '8 defenders near the line. Sell out to stop the run. If they sneak a pass over the top, tip your cap — but you stop the run right here.',
+  },
+  'goal-line': {
+    name: 'Goal Line',
+    situation: '1st & Goal inside the 2-yard line. One yard of grass between you and 6 points.',
+    offForm: 'I-Form',
+    defForm: '46',
+    offWhy: 'I-Formation with FB lead blocker. No room to spread out — pure power. The FB clears the linebacker, the RB follows through the hole.',
+    defWhy: '8 defenders near the line. No deep passes to worry about — the end zone is right there. Stack the box and make them earn every inch.',
+  },
+  'red-zone': {
+    name: 'Red Zone',
+    situation: '1st & 10 inside the opponent\'s 20-yard line. The field gets shorter — defense has a major advantage.',
+    offForm: 'Trips',
+    defForm: '4-3',
+    offWhy: 'Trips bunches receivers to one side, forcing the defense to rotate coverage. Less field means route combinations matter more than raw speed.',
+    defWhy: 'Base 4-3 stays disciplined. The compressed field eliminates deep routes, so the focus is stopping quick slants and back-shoulder fades to the corner.',
+  },
+  '2-minute': {
+    name: '2-Minute Drill',
+    situation: 'Under 2 minutes, no timeouts. Down by a score, need 60+ yards in a hurry.',
+    offForm: 'Shotgun',
+    defForm: 'Nickel',
+    offWhy: 'No-huddle Shotgun — quick snaps, sideline passes to stop the clock. Every completion needs to get out of bounds or pick up chunk yards.',
+    defWhy: 'Prevent big plays without burning timeouts. Accept short gains — there\'s no time to drive 80 yards on dink-and-dunk. Just don\'t give up the deep shot.',
+  },
+  'prevent': {
+    name: 'Prevent Defense',
+    situation: 'Leading by a score late in the 4th quarter. Offense needs a touchdown, defense needs to kill the clock.',
+    offForm: 'Empty',
+    defForm: 'Quarter',
+    offWhy: 'Empty backfield, everyone spread wide. Need big chunks fast — flood every zone with receivers and take your shots downfield.',
+    defWhy: '7 defensive backs, zero linebackers. Give up the short stuff — there\'s no time for a long drive. Protect the end zone at all costs. Never give up 6.',
+  },
+  'blitz': {
+    name: 'Blitz Package',
+    situation: '3rd & medium. Defense gambles — send extra rushers to force a sack or rushed throw.',
+    offForm: 'Shotgun',
+    defForm: '3-4',
+    offWhy: 'Shotgun buys a split-second to recognize the blitz. Hot routes — quick passes to the flat before the extra rushers arrive.',
+    defWhy: '4 linebackers in 3-4 means endless blitz combinations. The offense can\'t identify who\'s coming until after the snap. Confusion is the weapon.',
+  },
+};
+
 // ─── MATCHUP DATA ──────────────────────────────────────────────────
 // [offensivePlayerId, defensivePlayerId, label shown on hover]
 // Defined per defensive formation since coverage assignments change
@@ -1242,6 +1357,24 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasRun, setHasRun] = useState(false);
   const [showMatchups, setShowMatchups] = useState(false);
+  const [selectedScenario, setSelectedScenario] = useState('');
+
+  const scenario = selectedScenario ? SCENARIOS[selectedScenario] : null;
+
+  const handleSelectScenario = (key) => {
+    setSelectedScenario(key);
+    setSelectedPlay('');
+    setAnimPositions(null);
+    setHasRun(false);
+    setSelected(null);
+    setShowMatchups(false);
+    if (key) {
+      const s = SCENARIOS[key];
+      setOffForm(s.offForm);
+      setDefForm(s.defForm);
+      setView('both');
+    }
+  };
 
   const play = selectedPlay ? PLAYS[selectedPlay] : null;
 
@@ -1363,7 +1496,7 @@ function App() {
         {/* Offense formation */}
         <div className="control-group">
           <span className="control-label">Offense</span>
-          <select value={offForm} onChange={e => { setOffForm(e.target.value); setSelected(null); }} disabled={!!selectedPlay}>
+          <select value={offForm} onChange={e => { setOffForm(e.target.value); setSelected(null); setSelectedScenario(''); }} disabled={!!selectedPlay || !!selectedScenario}>
             <optgroup label="── Base ──">
               <option value="Shotgun">Shotgun</option>
               <option value="I-Form">I-Formation</option>
@@ -1384,7 +1517,7 @@ function App() {
         {/* Defense formation */}
         <div className="control-group">
           <span className="control-label">Defense</span>
-          <select value={defForm} onChange={e => { setDefForm(e.target.value); setSelected(null); }} disabled={!!selectedPlay}>
+          <select value={defForm} onChange={e => { setDefForm(e.target.value); setSelected(null); setSelectedScenario(''); }} disabled={!!selectedPlay || !!selectedScenario}>
             <optgroup label="── Base ──">
               <option value="4-3">4-3</option>
               <option value="3-4">3-4</option>
@@ -1397,6 +1530,30 @@ function App() {
             <optgroup label="── Specialty ──">
               <option value="46">46 (Bear)</option>
               <option value="Quarter">Quarter</option>
+            </optgroup>
+          </select>
+        </div>
+
+        {/* Scenario selector */}
+        <div className="control-group">
+          <span className="control-label">Scenario</span>
+          <select value={selectedScenario} onChange={e => handleSelectScenario(e.target.value)} disabled={!!selectedPlay}>
+            <option value="">— Game situation —</option>
+            <optgroup label="── Common ──">
+              <option value="1st-10">1st &amp; 10</option>
+              <option value="3rd-long">3rd &amp; Long</option>
+              <option value="4th-short">4th &amp; Short</option>
+            </optgroup>
+            <optgroup label="── Field Position ──">
+              <option value="goal-line">Goal Line</option>
+              <option value="red-zone">Red Zone</option>
+            </optgroup>
+            <optgroup label="── Clock ──">
+              <option value="2-minute">2-Minute Drill</option>
+              <option value="prevent">Prevent Defense</option>
+            </optgroup>
+            <optgroup label="── Specialty ──">
+              <option value="blitz">Blitz Package</option>
             </optgroup>
           </select>
         </div>
@@ -1491,6 +1648,27 @@ function App() {
           </div>
           <p className="info-role">{play.description}</p>
           {!hasRun && <p style={{ fontSize: '0.78rem', color: '#666', marginTop: '8px', fontStyle: 'italic' }}>Press ▶ Run Play to animate the routes</p>}
+        </div>
+      )}
+
+      {/* Scenario info panel */}
+      {scenario && (
+        <div className="scenario-panel">
+          <div className="info-header" style={{ marginBottom: '6px' }}>
+            <span className="info-name">{scenario.name}</span>
+            <span style={{ fontSize: '0.68rem', background: '#3a2a00', color: '#f5c842', border: '1px solid #6a4a00', borderRadius: '20px', padding: '2px 9px', fontWeight: 700 }}>Scenario</span>
+          </div>
+          <p className="scenario-situation">{scenario.situation}</p>
+          <div className="scenario-why">
+            <div className="scenario-side">
+              <div className="scenario-side-label off">Why this offense?</div>
+              <p className="scenario-why-text">{scenario.offWhy}</p>
+            </div>
+            <div className="scenario-side">
+              <div className="scenario-side-label def">Why this defense?</div>
+              <p className="scenario-why-text">{scenario.defWhy}</p>
+            </div>
+          </div>
         </div>
       )}
 
