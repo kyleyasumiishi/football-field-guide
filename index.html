@@ -22,11 +22,14 @@
 
     h1 {
       font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #69d2e7;
-      padding: 14px 0 8px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
+      padding: 18px 0 10px;
+      background: linear-gradient(90deg, #4a8a4a 0%, #69d2e7 50%, #82c55a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .controls {
@@ -878,7 +881,7 @@ function App() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      <h1>⚡ Football Field Guide</h1>
+      <h1>Football Field Guide</h1>
 
       <div className="controls">
         {/* View toggle */}
