@@ -109,20 +109,20 @@ import requests
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
 # Update SEASON at the start of each new NFL season year.
 # 2025 = the 2025-2026 season. Change to 2026 for the 2026-2027 season, etc.
-SEASON = 2025
+SEASON = 2026
 
 DELAY = 1  # seconds between teams — be polite to ESPN
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/120.0.0.0 Safari/537.36"
-    )
-}
+# NOTE: ESPN's API returns 403 for the previously-used browser-spoofing
+# User-Agent string. Using requests' default UA works reliably instead.
+HEADERS = {}
 
 TEAMS_URL    = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams?limit=32"
 ROSTER_URL   = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team_id}/roster"
+# Fallback for teams whose ROSTER_URL 404s (seen intermittently for individual
+# teams). Returns a flat athlete list under team.athletes instead of the
+# position-grouped shape from ROSTER_URL.
+ROSTER_FALLBACK_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/{team_id}?enable=roster"
 DEPTHCHART_URL = "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/{season}/teams/{team_id}/depthcharts"
 
 
@@ -195,12 +195,21 @@ def get_all_teams():
 
 def build_id_name_map(team_id):
     """Fetch the roster and return { athlete_id_str: fullName }."""
-    data = fetch_json(ROSTER_URL.format(team_id=team_id))
-    return {
-        str(player["id"]): player["fullName"]
-        for group in data.get("athletes", [])
-        for player in group.get("items", [])
-    }
+    try:
+        data = fetch_json(ROSTER_URL.format(team_id=team_id))
+        return {
+            str(player["id"]): player["fullName"]
+            for group in data.get("athletes", [])
+            for player in group.get("items", [])
+        }
+    except requests.exceptions.HTTPError:
+        # Some teams' roster endpoint intermittently 404s — fall back to
+        # the team endpoint's flat athlete list instead.
+        data = fetch_json(ROSTER_FALLBACK_URL.format(team_id=team_id))
+        return {
+            str(player["id"]): player["fullName"]
+            for player in data.get("team", {}).get("athletes", [])
+        }
 
 
 def extract_positions(formation, id_to_name, position_map):
